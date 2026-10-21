@@ -102,7 +102,9 @@ export function proposer(creneaux, plats, menus, reglages, options = {}) {
   // 1. Ce qu'on garde : verrouillés, notés, « pas de repas » (+ en mode remplir, tout ce qui existe)
   for (const c of creneaux) {
     const m = menus[c.id];
-    if (!m || m.deleted || (!m.platId && !m.aucun)) continue;
+    // un plat supprimé de la base (ou jamais existé) laisse le créneau vide
+    const platExiste = m?.platId && plats[m.platId] && !plats[m.platId].deleted;
+    if (!m || m.deleted || (!platExiste && !m.aucun)) continue;
     if (options.effacer && !m.verrouille && !estNote(m) && !m.aucun) continue;
     resultat[c.id] = { ...m };
   }
