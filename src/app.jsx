@@ -7,13 +7,13 @@ import { Repas } from './vues/Repas.jsx';
 import { proposerSemaine, nettoyerPropositions } from './actions.js';
 import { Reglages } from './vues/Reglages.jsx';
 import { Connexion } from './vues/Connexion.jsx';
-import { configure, supabase, initialiserSync, surSession, useSync } from './sync.js';
+import { configure, supabase, initialiserSync, surSession, useSync, quandSynchronise } from './sync.js';
 import { lundiDe, aujourdhui, joursDeLaSemaine } from './moteur/dates.js';
 import { Semaine } from './vues/Semaine.jsx';
 import { Planning } from './vues/Planning.jsx';
 
 semer('plats', PLATS_DEPART, VERSION_PLATS);
-nettoyerPropositions();
+quandSynchronise(nettoyerPropositions);
 
 const ONGLETS = [
   { id: 'semaine', libelle: 'Semaine', icone: '🍽️' },

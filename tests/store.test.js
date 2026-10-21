@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mettre, doc, appliquerDistants, enAttente, marquerEnvoyes, semer, supprimer, donnees } from '../src/store.js';
+import { mettre, doc, appliquerDistants, enAttente, marquerEnvoyes, semer, supprimer, donnees, lot } from '../src/store.js';
 
 describe('stockage local et fusion (la plus récente gagne)', () => {
   it('une écriture locale est mise en attente puis marquée envoyée', () => {
@@ -45,5 +45,24 @@ describe('mise à jour des plats de départ', () => {
     expect(doc('plats', 's-a').nom).toBe('A v2');
     expect(doc('plats', 's-b').nom).toBe('B modifié');
     expect(doc('plats', 's-c')).toBeUndefined();
+  });
+});
+
+describe('écritures automatiques « douces »', () => {
+  it('un verrou posé sur l’autre téléphone l’emporte sur une proposition automatique', () => {
+    // les deux téléphones partent de la même version du repas
+    appliquerDistants([{ coll: 'menus', id: 'x-soir', data: { platId: 'hachis', auto: true }, updated_at: 1000, deleted: false }]);
+    // ce téléphone (pas encore au courant du verrou) remplace automatiquement le plat
+    lot([{ coll: 'menus', id: 'x-soir', data: { platId: 'dahl', auto: true } }], { doux: true });
+    const auto = doc('menus', 'x-soir');
+    expect(auto.platId).toBe('dahl');
+    // le verrou posé plus tôt sur l'autre téléphone (même avec une horloge en retard) arrive
+    appliquerDistants([{ coll: 'menus', id: 'x-soir', data: { platId: 'hachis', verrouille: true }, updated_at: 1005, deleted: false }]);
+    expect(doc('menus', 'x-soir')).toEqual({ platId: 'hachis', verrouille: true });
+  });
+
+  it('une écriture normale reste datée de maintenant', () => {
+    lot([{ coll: 'menus', id: 'y-soir', data: { platId: 'dahl' } }]);
+    expect(enAttente().find((d) => d.id === 'y-soir').updated_at).toBeGreaterThan(1e12);
   });
 });
