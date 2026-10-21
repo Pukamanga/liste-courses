@@ -71,8 +71,22 @@ Dans Supabase, menu **Authentication** :
    - **Site URL** : `https://pukamanga.github.io/liste-courses/`
    - **Redirect URLs** → **Add URL** : `https://pukamanga.github.io/liste-courses/`
      (et, si tu veux tester en local, `http://localhost:5173/`)
-4. **Emails** → **Templates** → **Magic Link** : remplace le contenu par celui-ci, qui ajoute un **code à
-   6 chiffres** (indispensable pour l'app installée sur iPhone, voir l'étape 6) :
+4. **Envoi des e-mails par Gmail (obligatoire).** Sans serveur d'envoi personnel (« SMTP »), Supabase
+   bloque la modification des modèles d'e-mail, n'envoie qu'aux membres de l'équipe du projet (donc pas à
+   Julie) et pas plus de 2 e-mails par heure. Pour utiliser ton adresse Gmail :
+   1. Dans ton compte Google, active la **validation en deux étapes** (Sécurité), puis ouvre
+      <https://myaccount.google.com/apppasswords>, crée un mot de passe d'application nommé « Supabase » et
+      copie les 16 caractères.
+   2. Dans Supabase : **Authentication** → **Emails** → onglet **SMTP Settings** (selon la version, c'est
+      dans **Project Settings** → **Authentication**) → active **Enable custom SMTP** et remplis :
+      - Sender email : ton adresse Gmail ; Sender name : `Repas de la famille`
+      - Host : `smtp.gmail.com` ; Port : `465`
+      - Username : ton adresse Gmail ; Password : le mot de passe d'application (sans espaces)
+
+      Puis clique **Save**.
+5. **Emails** → **Templates** → **Magic Link** (modifiable une fois le SMTP enregistré) : remplace le
+   contenu par celui-ci, qui ajoute un **code à 6 chiffres** (indispensable pour l'app installée sur
+   iPhone, voir l'étape 6) :
 
    ```html
    <h2>Connexion à Repas de la famille</h2>
@@ -82,8 +96,8 @@ Dans Supabase, menu **Authentication** :
 
    Clique **Save**.
 
-> ℹ️ Le service d'e-mail intégré de Supabase est limité à quelques e-mails par heure. Ça suffit pour deux
-> personnes, puisque la session reste ouverte des semaines.
+> ℹ️ Gmail accepte plusieurs centaines d'envois par jour, largement assez pour deux personnes dont la
+> session reste ouverte des semaines.
 
 ### Étape 4 — Ajouter les secrets dans GitHub
 
