@@ -73,3 +73,33 @@ describe('import JSON du planning', () => {
     expect(analyserImport('{pas du json', R).erreurs[0]).toMatch(/illisible/);
   });
 });
+
+describe('prompt Claude pour Leclerc Drive', () => {
+  it('contient les règles, la liste sans les articles cochés et les repas', async () => {
+    const { promptClaude } = await import('../src/moteur/courses.js');
+    const groupes = [{ rayon: 'Fruits et légumes', articles: [
+      { cle: 'carotte|g', texte: 'Carotte — 500 g', plats: ['Dahl'] },
+      { cle: 'oignon|pièce', texte: 'Oignon — 2', plats: ['Dahl'] },
+    ] }];
+    const p = promptClaude({
+      groupes, coches: { 'oignon|pièce': true }, extras: ['Bananes'], titreSemaine: '2 – 8 novembre',
+      repas: ['Lundi soir : Dahl (3 pers.)'], magasin: 'Leclerc Drive Test', consignes: 'Pas de lait de vache.',
+    });
+    expect(p).toContain('Carotte — 500 g  (pour : Dahl)');
+    expect(p).not.toContain('Oignon — 2');
+    expect(p).toContain('- Bananes');
+    expect(p).toMatch(/Bio en priorité/);
+    expect(p).toMatch(/Nutri-Score A ou B/);
+    expect(p).toMatch(/Ne valide pas la commande/);
+    expect(p).toContain('« Leclerc Drive Test »');
+    expect(p).toContain('Pas de lait de vache.');
+    expect(p).toContain('- Lundi soir : Dahl (3 pers.)');
+  });
+
+  it('rayons des nouveaux ingrédients', () => {
+    expect(rayonDe({ nom: 'Petits pois surgelés' })).toBe('Surgelés');
+    expect(rayonDe({ nom: 'Tofu fumé' })).toBe('Traiteur / charcuterie');
+    expect(rayonDe({ nom: 'Ricotta' })).toBe('Crèmerie / fromages');
+    expect(rayonDe({ nom: 'Boulgour' })).toBe('Épicerie salée');
+  });
+});

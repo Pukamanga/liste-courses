@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
 import { doc, donnees, modifier } from '../store.js';
-import { creneauxAutour } from '../calcul.js';
-import { listeCourses, texteACopier } from '../moteur/courses.js';
-import { joursDeLaSemaine } from '../moteur/dates.js';
-import { NavSemaine } from './Semaine.jsx';
+import { creneauxAutour, reglages } from '../calcul.js';
+import { listeCourses, texteACopier, promptClaude } from '../moteur/courses.js';
+import { joursDeLaSemaine, JOURS_LONGS, jourSemaine } from '../moteur/dates.js';
+import { NavSemaine, titreSemaine } from './Semaine.jsx';
 
 async function copier(texte) {
   try {
@@ -27,7 +27,8 @@ export function Courses({ lundi, setLundi }) {
   const coches = etat.coches || {};
   const extras = etat.extras || [];
   const ids = new Set(joursDeLaSemaine(lundi).flatMap((d) => [`${d}-midi`, `${d}-soir`]));
-  const groupes = listeCourses(creneauxAutour(lundi, 3), donnees('menus'), donnees('plats'), ids);
+  const creneaux = creneauxAutour(lundi, 3);
+  const groupes = listeCourses(creneaux, donnees('menus'), donnees('plats'), ids);
   const total = groupes.reduce((n, g) => n + g.articles.length, 0) + extras.length;
   const restants = groupes.reduce((n, g) => n + g.articles.filter((a) => !coches[a.cle]).length, 0)
     + extras.filter((e) => !coches[`extra|${e}`]).length;
@@ -45,11 +46,29 @@ export function Courses({ lundi, setLundi }) {
     setTimeout(() => setToast(''), 2500);
   };
 
+  const copierPrompt = async () => {
+    const menus = donnees('menus');
+    const plats = donnees('plats');
+    const repas = creneaux.filter((c) => ids.has(c.id) && menus[c.id]?.platId && plats[menus[c.id].platId])
+      .map((c) => `${JOURS_LONGS[jourSemaine(c.date)]} ${c.repas} : ${plats[menus[c.id].platId].nom}`
+        + ` (${c.personnes} pers.${menus[c.id].reste ? ', restes' : ''})`);
+    const R = reglages();
+    const ok = await copier(promptClaude({
+      groupes, coches, extras, titreSemaine: titreSemaine(lundi), repas,
+      magasin: R.courses.magasin, consignes: R.courses.consignes,
+    }));
+    setToast(ok ? 'Prompt copié : collez-le dans Claude (avec Claude dans Chrome)' : 'Copie impossible');
+    setTimeout(() => setToast(''), 3000);
+  };
+
   return (
     <div>
       <NavSemaine lundi={lundi} setLundi={setLundi}>
         <button class="btn principal petit" onClick={copierListe} disabled={!restants}>📋 Copier</button>
       </NavSemaine>
+      <button class="btn" style="width:100%;margin-bottom:8px" onClick={copierPrompt} disabled={!restants}>
+        🤖 Copier la liste avec le prompt Claude (Leclerc Drive)
+      </button>
       <p class="doux">{restants} à acheter sur {total}. Cochez ce que vous avez déjà : ce ne sera pas copié.</p>
       {total === 0 && <div class="carte vide">Aucun repas prévu cette semaine : lancez « Proposer » dans l’onglet Semaine.</div>}
       {groupes.map((g) => (

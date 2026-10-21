@@ -135,8 +135,26 @@ export function Reglages() {
           <Nombre libelle="Portion grand-parent" valeur={R.portions.grandParent} onChange={(v) => set('portions', 'grandParent', v)} />
           <Nombre libelle="Portion en plus les jours de VTT" valeur={R.portions.bonusVTT} onChange={(v) => set('portions', 'bonusVTT', v)} />
         </div>
+        <label class="case" style="margin:8px 0">
+          <input type="checkbox" checked={R.viandeAvecGrandsParentsSeulement}
+            onChange={(e) => majCle('viandeAvecGrandsParentsSeulement', e.target.checked)} />
+          Viande seulement quand les grands-parents sont là
+        </label>
         <p class="doux petit-texte">Jours d’école (cantine) :</p>
         <JoursSemaine valeur={R.joursEcole} onChange={(v) => majCle('joursEcole', v)} />
+      </details>
+
+      <details class="carte">
+        <summary>Courses Leclerc Drive</summary>
+        <p class="doux petit-texte">Utilisés par le bouton « Copier la liste avec le prompt Claude ».</p>
+        <label class="champ">Magasin Leclerc Drive
+          <input type="text" placeholder="ex. E.Leclerc Drive …" value={R.courses.magasin}
+            onChange={(e) => set('courses', 'magasin', e.target.value.trim())} />
+        </label>
+        <label class="champ" style="margin-top:8px">Consignes en plus pour Claude
+          <textarea style="min-height:90px;font-family:inherit" placeholder="ex. Lait d’avoine plutôt que lait de vache. Budget max 120 €."
+            value={R.courses.consignes} onChange={(e) => set('courses', 'consignes', e.target.value.trim())} />
+        </label>
       </details>
 
       <details class="carte">

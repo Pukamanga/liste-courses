@@ -10,8 +10,11 @@ de saison, avec les restes enchaînés. Elle produit aussi la liste de courses d
 - **Semaine** : moments de repas (heure + convives), temps de préparation, étiquettes
   (« Express 15 min », « Prêt à l'avance », « En plusieurs temps », « Jour de cuisine », « VTT », « Grands-parents »),
   proposition automatique, « Autre idée », verrouillage, notes après le repas.
-- **Plats** : 44 plats de départ modifiables (temps, étiquettes, saisons, ingrédients par personne).
-- **Courses** : ingrédients additionnés et regroupés par rayon, cases « déjà à la maison », bouton « Copier ».
+- **Plats** : 48 plats de départ, majoritairement végétariens et équilibrés (légumes + protéine + féculent), modifiables
+  (temps, étiquettes, saisons, protéine principale, ingrédients par personne). La viande n'est proposée que quand
+  les grands-parents sont là.
+- **Courses** : ingrédients additionnés et regroupés par rayon, cases « déjà à la maison », bouton « Copier » et
+  bouton « Copier la liste avec le prompt Claude » pour que Claude remplisse le panier Leclerc Drive.
 - **Réglages** : toutes les règles (horaires des postes, heures des repas, temps de cuisine, activités,
   vacances scolaires, portions…).
 - Synchronisation en temps réel entre nos deux téléphones (Supabase), utilisable hors connexion.
@@ -171,8 +174,16 @@ les modifications sont envoyées au retour du réseau.
   propositions suivantes.
 
 ### Courses
-Coche ce que vous avez déjà, ajoute des articles en plus, puis **📋 Copier**. La liste (un article par
-ligne) est dans le presse-papiers, prête à coller dans la liste de courses de l'app Leclerc Drive.
+Coche ce que vous avez déjà, ajoute des articles en plus (fruits, goûters, produits du quotidien), puis :
+- **📋 Copier** : la liste (un article par ligne), à coller dans la liste de courses de l'app Leclerc Drive ;
+- **🤖 Copier la liste avec le prompt Claude** : un texte complet à coller dans Claude, qui doit pouvoir piloter
+  le navigateur (extension **Claude dans Chrome**). Claude ouvre Leclerc Drive et remplit le panier en privilégiant
+  le bio (Bio Village), les Nutri-Score A/B et les produits sans additifs à risque. Il s'arrête au panier :
+  **il ne valide pas la commande**, et il termine par un récapitulatif (prix, bio, Nutri-Score, remplacements).
+  Indique ton magasin et d'éventuelles consignes (budget, lait végétal…) dans **Réglages → Courses Leclerc Drive**.
+
+> Le score Yuka n'est pas affiché sur Leclerc Drive : le prompt demande à Claude d'appliquer les mêmes critères
+> (Nutri-Score, bio, additifs à risque, produit peu transformé) en lisant les fiches produits.
 
 ---
 
@@ -194,6 +205,7 @@ Toutes les valeurs ci-dessous se modifient dans **Réglages**.
 | Jour de cuisine | L'un de vous est en R, CA ou M. Les plats longs et « en double » sont favorisés, et un plat en double remplit 1 ou 2 créneaux des 2 jours suivants (en priorité les soirs en plusieurs temps, puis ceux « prêt à l'avance » ou « express »). |
 | VTT | Mardi matin (avril–novembre) ou case cochée : repas « consistants » favorisés, portion +30 %. |
 | Grands-parents | Ajoutés à tous les repas à la maison (2 par défaut), peuvent garder Martin : pas d'avertissement M/S ni « aucun adulte avec Martin ». |
+| Viande et équilibre | Les plats « viande » ne sont proposés que pendant une période grands-parents (réglable). D'un repas à l'autre, la source de protéines varie (légumineuses, œufs, fromage, soja, poisson). |
 | Proposition | Score sans IA : saison du plat et des fruits et légumes du mois (calendrier France inclus), notes, préférences de Martin, consistant les jours de VTT, plats en double les jours de cuisine. Pas le même plat deux fois en 10 jours (hors restes). Un léger hasard, identique sur les deux téléphones, varie les semaines. |
 
 ---
@@ -221,7 +233,7 @@ src/moteur/          ← logique pure, sans interface, entièrement testée
   courses.js         agrégation des ingrédients par rayon
   import.js          lecture du JSON de planning
   reglages.js        règles par défaut (modifiables dans l'app)
-  plats-depart.js    les 44 plats de départ
+  plats-depart.js    les 48 plats de départ (VERSION_PLATS à incrémenter quand on les change)
 src/store.js         stockage local-first (localStorage) + file d'envoi
 src/sync.js          Supabase : connexion, envoi, lecture, temps réel
 src/vues/            écrans (Preact)
@@ -246,6 +258,9 @@ tests/               tests unitaires
   relancer depuis le tableau de bord Supabase. Les données restent aussi sur chaque téléphone.
 - Pas de week-end travaillé « un sur deux » calculé automatiquement : c'est la grille saisie qui fait foi.
 - Les plats de départ sont identiques sur les deux téléphones et ne sont envoyés à Supabase qu'une fois
-  modifiés.
+  modifiés. Quand une nouvelle version de la base est publiée, les plats de départ jamais modifiés sont
+  remplacés automatiquement ; ceux que vous avez modifiés ou créés sont conservés.
+- La liste de courses ne couvre que les repas prévus : fruits, petits-déjeuners et goûters sont à ajouter
+  dans « En plus ».
 - Pas de photos ni de recettes détaillées dans les fiches plats (nom, temps, étiquettes et ingrédients
   seulement).

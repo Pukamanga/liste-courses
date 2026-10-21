@@ -36,3 +36,14 @@ describe('stockage local et fusion (la plus récente gagne)', () => {
     expect(enAttente().find((d) => d.id === 'g1').deleted).toBe(true);
   });
 });
+
+describe('mise à jour des plats de départ', () => {
+  it('remplace les plats de départ non modifiés, garde ceux modifiés', () => {
+    semer('plats', [{ id: 's-a', nom: 'A v1' }, { id: 's-b', nom: 'B v1' }, { id: 's-c', nom: 'C v1' }], 1);
+    mettre('plats', 's-b', { id: 's-b', nom: 'B modifié' });
+    semer('plats', [{ id: 's-a', nom: 'A v2' }, { id: 's-b', nom: 'B v2' }], 2);
+    expect(doc('plats', 's-a').nom).toBe('A v2');
+    expect(doc('plats', 's-b').nom).toBe('B modifié');
+    expect(doc('plats', 's-c')).toBeUndefined();
+  });
+});

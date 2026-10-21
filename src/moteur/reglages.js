@@ -42,6 +42,7 @@ export const REGLAGES_DEFAUT = {
   postesJourCuisine: ['R', 'CA', 'M'],
   joursEcole: [1, 2, 4, 5], // lundi, mardi, jeudi, vendredi
   portions: { adulte: 1, martin: 0.75, grandParent: 1, bonusVTT: 0.3 },
+  viandeAvecGrandsParentsSeulement: true, // viande proposée seulement quand les grands-parents sont là
   antiRepetitionJours: 10,
   restesMax: 2,
   restesFenetreJours: 2, // les restes sont mangés au plus tard 2 jours après
@@ -56,6 +57,10 @@ export const REGLAGES_DEFAUT = {
   // Activité ajoutée quand la case « VTT » est cochée sur un jour
   vttManuel: { id: 'vtt-manuel', nom: 'VTT', qui: 'moi', debut: '08:30', fin: '12:00', consistant: true },
   vacances: VACANCES_ZONE_A,
+  courses: {
+    magasin: '', // ex. « E.Leclerc Drive Grenoble Comboire »
+    consignes: '', // consignes ajoutées au prompt Claude
+  },
 };
 
 // Fusion profonde « réglages enregistrés » + défauts (les tableaux enregistrés remplacent les défauts).

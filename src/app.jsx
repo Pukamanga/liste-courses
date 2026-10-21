@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { useStore, semer, doc } from './store.js';
-import { PLATS_DEPART } from './moteur/plats-depart.js';
+import { PLATS_DEPART, VERSION_PLATS } from './moteur/plats-depart.js';
 import { Plats } from './vues/Plats.jsx';
 import { Courses } from './vues/Courses.jsx';
 import { Repas } from './vues/Repas.jsx';
@@ -12,7 +12,7 @@ import { lundiDe, aujourdhui, joursDeLaSemaine } from './moteur/dates.js';
 import { Semaine } from './vues/Semaine.jsx';
 import { Planning } from './vues/Planning.jsx';
 
-semer('plats', PLATS_DEPART);
+semer('plats', PLATS_DEPART, VERSION_PLATS);
 
 const ONGLETS = [
   { id: 'semaine', libelle: 'Semaine', icone: '🍽️' },
