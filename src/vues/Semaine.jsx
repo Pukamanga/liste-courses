@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import { doc, modifier } from '../store.js';
 import { semaine, reglages, nomDe } from '../calcul.js';
 import { ajouterJours, libelleDate, aujourdhui, depuisIso, MOIS_LONGS, lundiDe } from '../moteur/dates.js';
@@ -35,14 +36,23 @@ export function Etiquettes({ liste }) {
 
 export function Semaine({ lundi, setLundi, Repas, actions }) {
   const R = reglages();
-  const jours = semaine(lundi);
   const auj = aujourdhui();
+  const [voirPasses, setVoirPasses] = useState(false);
+  // Semaine en cours : la liste commence aujourd'hui, les jours passés sont repliés
+  const tous = semaine(lundi);
+  const passes = lundi === lundiDe(auj) ? tous.filter((j) => j.date < auj) : [];
+  const jours = voirPasses ? tous : tous.filter((j) => !passes.includes(j));
   const incomplets = jours.filter((j) => j.incomplet).length;
 
   return (
     <div>
       <NavSemaine lundi={lundi} setLundi={setLundi}>{actions}</NavSemaine>
       {incomplets > 0 && <div class="alerte">{incomplets} jour(s) sans planning complet : saisissez-les dans « Planning ».</div>}
+      {passes.length > 0 && (
+        <button class="btn petit" style="margin-bottom:10px" onClick={() => setVoirPasses(!voirPasses)}>
+          {voirPasses ? 'Masquer les jours passés' : `Voir les jours passés (${passes.length}) pour noter les repas`}
+        </button>
+      )}
       {jours.map((j) => (
         <div key={j.date} class={`carte ${j.date === auj ? 'aujourdhui' : ''} ${j.date < auj ? 'passe' : ''}`}>
           <div class="jour-titre">
