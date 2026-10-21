@@ -21,6 +21,7 @@ const ecouteursLocaux = new Set();
 let cache = {};
 
 function sauver() {
+  if (typeof localStorage === 'undefined') return;
   try {
     localStorage.setItem(CLE, JSON.stringify(docs));
     localStorage.setItem(CLE_ATTENTE, JSON.stringify(attente));
