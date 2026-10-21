@@ -23,6 +23,7 @@ export function resumePlat(p) {
     p.double && 'en double',
     p.consistant && 'consistant',
     p.leger && 'léger',
+    p.julieAime && 'Julie aime',
     p.martin === 'aime' && 'Martin aime',
     p.martin === 'naimePas' && 'Martin n’aime pas',
     p.saisons?.length && p.saisons.length < 4 ? p.saisons.map((s) => LIBELLES_SAISONS[s]).join('/') : null,
@@ -111,7 +112,7 @@ function Formulaire({ initial, onFini }) {
         </div>
         <h2>Étiquettes</h2>
         <div class="rangee">
-          {[['rechauffe', 'Se réchauffe bien'], ['double', 'Se prépare en double'], ['consistant', 'Consistant'], ['leger', 'Léger']].map(([k, l]) => (
+          {[['rechauffe', 'Se réchauffe bien'], ['double', 'Se prépare en double'], ['consistant', 'Consistant'], ['leger', 'Léger'], ['julieAime', 'Julie aime']].map(([k, l]) => (
             <label class="case" key={k}><input type="checkbox" checked={!!p[k]} onChange={(e) => maj(k, e.target.checked)} />{l}</label>
           ))}
         </div>

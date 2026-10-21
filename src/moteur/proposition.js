@@ -63,6 +63,7 @@ export function scorer(plat, creneau, ctx) {
     if (plat.martin === 'aime') s += 2;
     if (plat.martin === 'naimePas') s -= 4;
   }
+  if (plat.julieAime && creneau.qui?.includes('julie')) s += 1.5;
   if (e.includes(ETIQ.VTT)) s += (plat.consistant ? 3 : 0) - (plat.leger ? 2 : 0);
   // Viande : seulement quand les grands-parents sont là
   if (plat.proteine === 'viande' && ctx.reglages?.viandeAvecGrandsParentsSeulement !== false) {
