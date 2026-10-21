@@ -116,10 +116,19 @@ describe('questions avant les courses', () => {
     const rayon = (debut) => groupes.find((g) => g.articles.some((a) => a.texte.startsWith(debut))).rayon;
     expect(rayon('Bananes')).toBe('Fruits et légumes');
     expect(rayon('Compotes')).toBe('Épicerie sucrée');
-    expect(rayon('Yaourts')).toBe('Crèmerie / fromages');
+    expect(textes).not.toContain('Yaourts pour Martin — 8'); // rappel sans réponse « à ajouter »
     expect(rayon('Riz')).toBe('Épicerie salée');
     const fl = groupes.find((g) => g.rayon === 'Fruits et légumes').articles;
     expect(fl.find((a) => a.texte.startsWith('Bananes')).plats).toEqual(['Bananes']);
+  });
+
+  it('rappel « As-tu pensé aux yaourts de Martin ? »', async () => {
+    const { articlesVerifications, ajouterArticlesLibres } = await import('../src/moteur/courses.js');
+    const arts = articlesVerifications(R.verifications, { 'yaourts-martin': 'acheter' }, 10);
+    expect(arts.map((a) => a.texte)).toEqual(['Yaourts pour Martin — 8']);
+    expect(ajouterArticlesLibres([], arts)[0].rayon).toBe('Crèmerie / fromages');
+    const pdj = R.verifications.find((v) => v.id === 'petit-dejeuner').articles.join(' ');
+    expect(pdj).not.toMatch(/Confiture|Beurre/);
   });
 
   it('rien d’ajouté sans réponse « à racheter »', async () => {

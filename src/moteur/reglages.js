@@ -62,13 +62,16 @@ export const REGLAGES_DEFAUT = {
     consignes: '', // consignes ajoutées au prompt Claude
   },
   // Questions posées avant de copier la liste : si « À racheter », les articles sont ajoutés.
+  // type 'rappel' : question « As-tu pensé à… ? » (boutons « Pas besoin » / « Oui, à ajouter »).
   // {fruits} est remplacé par les fruits de saison du mois.
   verifications: [
     { id: 'petit-dejeuner', titre: 'Petit-déjeuner', question: 'Reste-t-il de quoi faire les petits-déjeuners ?',
-      articles: ['Pain complet — 2', 'Flocons d’avoine — 500 g', 'Lait — 2 L', 'Confiture — 1 pot', 'Beurre — 250 g'] },
+      articles: ['Pain complet — 2', 'Flocons d’avoine — 500 g', 'Lait — 2 L'] },
     { id: 'gouter', titre: 'Goûter', question: 'Reste-t-il de quoi faire les goûters ?',
-      articles: ['Compotes sans sucres ajoutés — 1 lot', 'Biscuits — 2 paquets', 'Yaourts nature — 8', 'Fruits de saison ({fruits}) — 1,5 kg'] },
+      articles: ['Compotes sans sucres ajoutés — 1 lot', 'Biscuits — 2 paquets', 'Fruits de saison ({fruits}) — 1,5 kg'] },
     { id: 'bananes', titre: 'Bananes', question: 'Reste-t-il des bananes ?', articles: ['Bananes — 1,5 kg'] },
+    { id: 'yaourts-martin', type: 'rappel', titre: 'Yaourts de Martin', question: 'As-tu pensé aux yaourts de Martin ?',
+      articles: ['Yaourts pour Martin — 8'] },
   ],
 };
 

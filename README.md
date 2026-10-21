@@ -175,7 +175,7 @@ les modifications sont envoyées au retour du réseau.
 
 ### Courses
 En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
-« … les goûters ? », « … des bananes ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
+« … les goûters ? », « … des bananes ? », et le rappel « As-tu pensé aux yaourts de Martin ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
 (les fruits du goûter sont ceux de saison). La copie n'est possible qu'une fois les questions répondues. Questions et
 articles se modifient dans **Réglages → Questions avant les courses**.
 

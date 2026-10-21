@@ -282,9 +282,16 @@ function Verifications({ liste }) {
             <input type="text" style="flex:1" value={v.question} onChange={(e) => maj(i, 'question', e.target.value)} />
             <button class="btn petit danger" onClick={() => majCle('verifications', liste.filter((_, j) => j !== i))}>✕</button>
           </div>
-          <label class="champ" style="margin-top:6px">Nom court
-            <input type="text" style="width:160px" value={v.titre} onChange={(e) => maj(i, 'titre', e.target.value)} />
-          </label>
+          <div class="rangee" style="margin-top:6px">
+            <label class="champ">Nom court
+              <input type="text" style="width:160px" value={v.titre} onChange={(e) => maj(i, 'titre', e.target.value)} />
+            </label>
+            <label class="champ">Type
+              <select value={v.type || ''} onChange={(e) => maj(i, 'type', e.target.value || null)}>
+                <option value="">Reste-t-il… ?</option><option value="rappel">As-tu pensé à… ?</option>
+              </select>
+            </label>
+          </div>
           <label class="champ" style="margin-top:6px">Articles à racheter
             <textarea style="min-height:90px;font-family:inherit" value={(v.articles || []).join('\n')}
               onChange={(e) => maj(i, 'articles', e.target.value.split('\n').map((t) => t.trim()).filter(Boolean))} />

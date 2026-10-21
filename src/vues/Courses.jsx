@@ -93,8 +93,12 @@ export function Courses({ lundi, setLundi }) {
             <div key={v.id} class="verif">
               <div>{v.question}</div>
               <div class="rangee" style="margin-top:6px">
-                <button class={`btn petit ${reponses[v.id] === 'reste' ? 'actif' : ''}`} onClick={() => repondre(v.id, 'reste')}>Oui, il en reste</button>
-                <button class={`btn petit ${reponses[v.id] === 'acheter' ? 'actif' : ''}`} onClick={() => repondre(v.id, 'acheter')}>Non, à racheter</button>
+                <button class={`btn petit ${reponses[v.id] === 'reste' ? 'actif' : ''}`} onClick={() => repondre(v.id, 'reste')}>
+                  {v.type === 'rappel' ? 'Pas besoin' : 'Oui, il en reste'}
+                </button>
+                <button class={`btn petit ${reponses[v.id] === 'acheter' ? 'actif' : ''}`} onClick={() => repondre(v.id, 'acheter')}>
+                  {v.type === 'rappel' ? 'Oui, à ajouter' : 'Non, à racheter'}
+                </button>
               </div>
               {reponses[v.id] === 'acheter' && (
                 <div class="doux petit-texte" style="margin-top:4px">Ajouté : {articlesVerifications([v], reponses, moisDe(lundi)).map((a) => a.texte).join(' · ')}</div>
