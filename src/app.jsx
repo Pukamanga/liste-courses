@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { useStore, semer, doc } from './store.js';
 import { PLATS_DEPART } from './moteur/plats-depart.js';
 import { Plats } from './vues/Plats.jsx';
+import { Courses } from './vues/Courses.jsx';
 import { Repas } from './vues/Repas.jsx';
 import { proposerSemaine } from './actions.js';
 import { lundiDe, aujourdhui, joursDeLaSemaine } from './moteur/dates.js';
@@ -36,6 +37,7 @@ export function App() {
         )}
         {onglet === 'planning' && <Planning />}
         {onglet === 'plats' && <Plats />}
+        {onglet === 'courses' && <Courses lundi={lundi} setLundi={setLundi} />}
       </main>
       <nav class="onglets">
         {ONGLETS.map((o) => (
