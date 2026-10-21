@@ -44,7 +44,7 @@ export const REGLAGES_DEFAUT = {
   portions: { adulte: 1, martin: 0.75, grandParent: 1, bonusVTT: 0.3 },
   antiRepetitionJours: 10,
   restesMax: 2,
-  restesFenetreJours: 3,
+  restesFenetreJours: 2, // les restes sont mangés au plus tard 2 jours après
   activites: [
     { id: 'danse', nom: 'Danse africaine', qui: 'julie', jours: [2], debut: '19:00', fin: '20:15', repas: 'soir', heureRepas: '20:30' },
     { id: 'volley-mardi', nom: 'Volley', qui: 'moi', jours: [2], debut: '20:30', fin: '22:30', repas: 'soir', heureRepas: '22:45' },

@@ -186,7 +186,7 @@ export function analyserJour(date, jour = {}, reglages, periodesGP = []) {
       if (qui.includes('martin') && !gp) {
         const present = PERSONNES.some((p) => qui.includes(p) &&
           arriveeMaison(postes[p], reglages) <= hDiner &&
-          !actDe(p).some((a) => chevauche(enMinutes(a.debut) - trajet, enMinutes(a.fin) + trajet, hDiner, hDiner + 30)));
+          !actDe(p).some((a) => chevauche(enMinutes(a.debut) - trajet, enMinutes(a.fin) + trajet, hDiner, hDiner + 10)));
         if (!present) warn.push(`Aucun adulte avec ${reglages.noms.martin} au dîner de ${reglages.heures.diner}`);
       }
     }

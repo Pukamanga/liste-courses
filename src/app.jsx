@@ -1,8 +1,14 @@
 import { useState } from 'preact/hooks';
-import { useStore } from './store.js';
-import { lundiDe, aujourdhui } from './moteur/dates.js';
+import { useStore, semer, doc } from './store.js';
+import { PLATS_DEPART } from './moteur/plats-depart.js';
+import { Plats } from './vues/Plats.jsx';
+import { Repas } from './vues/Repas.jsx';
+import { proposerSemaine } from './actions.js';
+import { lundiDe, aujourdhui, joursDeLaSemaine } from './moteur/dates.js';
 import { Semaine } from './vues/Semaine.jsx';
 import { Planning } from './vues/Planning.jsx';
+
+semer('plats', PLATS_DEPART);
 
 const ONGLETS = [
   { id: 'semaine', libelle: 'Semaine', icone: '🍽️' },
@@ -21,8 +27,15 @@ export function App() {
   return (
     <div class="appli">
       <main>
-        {onglet === 'semaine' && <Semaine lundi={lundi} setLundi={setLundi} />}
+        {onglet === 'semaine' && (
+          <Semaine lundi={lundi} setLundi={setLundi} Repas={Repas}
+            actions={<button class="btn principal petit" onClick={() => {
+              const deja = joursDeLaSemaine(lundi).some((d) => doc('menus', `${d}-midi`)?.platId || doc('menus', `${d}-soir`)?.platId);
+              if (!deja || confirm('Refaire les propositions non verrouillées et non notées de la semaine ?')) proposerSemaine(lundi, true);
+            }}>Proposer</button>} />
+        )}
         {onglet === 'planning' && <Planning />}
+        {onglet === 'plats' && <Plats />}
       </main>
       <nav class="onglets">
         {ONGLETS.map((o) => (

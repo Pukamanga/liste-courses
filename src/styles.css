@@ -118,7 +118,7 @@ input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent); }
 
 /* Plats */
 .liste-plats .plat-ligne { display: flex; justify-content: space-between; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--ligne); align-items: center; }
-.ingredient { display: grid; grid-template-columns: 1fr 70px 70px 32px; gap: 4px; margin-bottom: 4px; }
+.ingredient { display: grid; grid-template-columns: 1fr 64px 88px 36px; gap: 4px; margin-bottom: 4px; }
 .ingredient input, .ingredient select { min-width: 0; padding: 6px; }
 .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--texte); color: var(--fond); padding: 10px 16px; border-radius: 10px; z-index: 20; font-size: .9rem; }
 .bandeau { font-size: .8rem; text-align: center; padding: 4px; background: var(--alerte-fond); color: var(--alerte); }

@@ -80,6 +80,7 @@ describe('activités du soir et dîner en plusieurs temps', () => {
       { heure: '19:30', qui: ['martin'] },
       { heure: '22:15', qui: ['moi'] },
     ]);
+    expect(j.creneaux.soir.avertissements).toEqual([]); // je pars à 19h45 : je suis là à 19h30
   });
 
   it('une activité du soir est ignorée si la personne est en S', () => {
