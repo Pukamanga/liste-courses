@@ -5,7 +5,7 @@
 // Tout est modifiable dans l'écran « Plats ».
 
 // À incrémenter quand cette liste change : les plats de départ jamais modifiés sont alors mis à jour.
-export const VERSION_PLATS = 2;
+export const VERSION_PLATS = 3;
 
 const i = (nom, qte, unite = 'g') => ({ nom, qte, unite });
 const A = ['automne'], H = ['hiver'], E = ['ete'];
@@ -34,8 +34,12 @@ export const PLATS_DEPART = [
     [i('Lentilles vertes', 60), i('Carotte', 60), i('Oignon', 0.25, 'pièce'), i('Pomme de terre', 250), i('Lait', 50, 'ml'), i('Beurre', 10), i('Comté râpé', 20)]),
   plat('bolo-lentilles', 'Spaghetti complets bolognaise de lentilles', 15, 30, { proteine: 'legumineuses', rechauffe: true, double: true, consistant: true, martin: 'aime' },
     [i('Spaghetti complets', 100), i('Lentilles corail', 40), i('Coulis de tomate', 120), i('Carotte', 50), i('Oignon', 0.25, 'pièce'), i('Parmesan', 10)]),
-  plat('soupe-pois-casses', 'Soupe de pois cassés, tartines', 15, 50, { proteine: 'legumineuses', rechauffe: true, double: true, saisons: H },
+  plat('soupe-pois-casses', 'Soupe de pois cassés, pain complet', 15, 50, { proteine: 'legumineuses', rechauffe: true, double: true, saisons: H },
     [i('Pois cassés', 70), i('Carotte', 60), i('Oignon', 0.25, 'pièce'), i('Pain complet', 60)]),
+  plat('minestrone', 'Minestrone aux haricots blancs et petites pâtes', 20, 35, { proteine: 'legumineuses', rechauffe: true, double: true, leger: true, saisons: AH },
+    [i('Poireau', 80), i('Carotte', 80), i('Céleri', 40), i('Haricots blancs', 100), i('Coulis de tomate', 80), i('Petites pâtes', 30), i('Pain complet', 50)]),
+  plat('veloute-potiron-lentilles', 'Velouté potiron-lentilles corail au lait de coco, graines de courge', 15, 30, { proteine: 'legumineuses', rechauffe: true, double: true, leger: true, martin: 'aime', saisons: A },
+    [i('Potiron', 250), i('Lentilles corail', 50), i('Lait de coco', 50, 'ml'), i('Oignon', 0.25, 'pièce'), i('Graines de courge', 10), i('Pain complet', 50)]),
   plat('falafels', 'Falafels, taboulé et sauce yaourt', 20, 15, { proteine: 'legumineuses', martin: 'aime', saisons: PE },
     [i('Falafels', 5, 'pièce'), i('Boulgour', 60), i('Tomate', 80), i('Concombre', 80), i('Yaourt nature', 0.5, 'pièce'), i('Menthe', 0.1, 'botte')]),
   plat('houmous-crudites', 'Houmous, crudités et pain pita', 15, 0, { proteine: 'legumineuses', leger: true },
@@ -76,10 +80,6 @@ export const PLATS_DEPART = [
     [i('Pâte à pizza', 0.33, 'pièce'), i('Coulis de tomate', 50), i('Mozzarella', 60), i('Champignons de Paris', 40), i('Olives', 10), i('Salade', 30)]),
   plat('raclette', 'Raclette et salade', 10, 20, { proteine: 'laitier', consistant: true, martin: 'aime', saisons: H },
     [i('Pomme de terre', 300), i('Fromage à raclette', 180), i('Cornichons', 20), i('Salade', 40)]),
-  plat('soupe-legumes', 'Soupe de légumes et tartines au chèvre', 20, 30, { proteine: 'laitier', rechauffe: true, double: true, leger: true, saisons: AH },
-    [i('Poireau', 100), i('Carotte', 100), i('Pomme de terre', 100), i('Pain complet', 70), i('Fromage de chèvre', 40)]),
-  plat('veloute-potiron', 'Velouté de potiron, tartines au comté', 15, 30, { proteine: 'laitier', rechauffe: true, double: true, leger: true, saisons: A },
-    [i('Potiron', 250), i('Pomme de terre', 80), i('Crème fraîche', 20, 'ml'), i('Pain complet', 60), i('Comté', 30)]),
   plat('gnocchis', 'Gnocchis poêlés, sauce tomate et mozzarella', 5, 10, { proteine: 'laitier', martin: 'aime' },
     [i('Gnocchis', 150), i('Coulis de tomate', 80), i('Mozzarella', 40), i('Salade', 30)]),
   plat('coquillettes-pois', 'Coquillettes, petits pois et emmental', 5, 10, { proteine: 'laitier', martin: 'aime' },

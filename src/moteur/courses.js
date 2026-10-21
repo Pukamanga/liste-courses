@@ -26,7 +26,7 @@ const MOTS_RAYONS = [
   ['Épicerie salée', ['pâtes', 'spaghetti', 'coquillettes', 'lasagne', 'riz', 'semoule', 'lentille', 'pois chiche',
     'haricots rouges', 'farine', 'coulis', 'coulis de tomate', 'sauce tomate', 'concentré de tomate', 'sauce', 'huile', 'vinaigre', 'moutarde', 'bouillon', 'thon', 'olive',
     'lait de coco', 'curry', 'épice', 'pesto', 'tortilla', 'vin', 'cornichon', 'chapelure', 'boulgour', 'quinoa',
-    'polenta', 'nouilles', 'pois cassés', 'ras el hanout', 'sauce soja']],
+    'polenta', 'nouilles', 'pois cassés', 'ras el hanout', 'sauce soja', 'haricots blancs', 'graines']],
 ];
 
 export function rayonDe(ingredient) {

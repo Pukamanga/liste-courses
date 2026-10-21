@@ -72,7 +72,7 @@ export function normaliser(nom) {
 
 // Retrouve le produit de saison correspondant à un nom d'ingrédient
 // (« tomates cerises » -> « tomate cerise », « courgettes » -> « courgette »).
-const TRANSFORME = /coulis|sauce|concentré|surgel|conserve|jus |pesto|confiture|séché|en boîte/;
+const TRANSFORME = /graines|coulis|sauce|concentré|surgel|conserve|jus |pesto|confiture|séché|en boîte/;
 
 export function produitDe(nomIngredient) {
   const n = normaliser(nomIngredient);
