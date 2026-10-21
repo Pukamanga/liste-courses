@@ -60,6 +60,9 @@ export function Repas({ c }) {
           ? `Restes du ${libelleCreneau(m.reste)} — à réchauffer`
           : `${plat.prep} min de préparation + ${plat.cuisson} min de cuisson${plat.rechauffe ? ' · se réchauffe bien' : ''}`}
         {restes.length > 0 && <div>Cuisiner en double : aussi pour {restes.map(libelleCreneau).join(', ')}</div>}
+        {plat.recette && (
+          <details><summary class="petit-texte">Recette</summary><div class="recette">{plat.recette}</div></details>
+        )}
       </div>
       <div class="rangee" style="margin-top:8px">
         <button class={`btn petit ${m.verrouille ? 'actif' : ''}`} onClick={() => basculerVerrou(c)} aria-pressed={!!m.verrouille}>

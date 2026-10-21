@@ -5,7 +5,7 @@
 // Tout est modifiable dans l'écran « Plats ».
 
 // À incrémenter quand cette liste change : les plats de départ jamais modifiés sont alors mis à jour.
-export const VERSION_PLATS = 6;
+export const VERSION_PLATS = 7;
 
 const i = (nom, qte, unite = 'g') => ({ nom, qte, unite });
 const A = ['automne'], H = ['hiver'], E = ['ete'];
@@ -60,6 +60,9 @@ export const PLATS_DEPART = [
     [i('Œufs', 2, 'pièce'), i('Pomme de terre', 150), i('Épinards', 80), i('Parmesan', 10)]),
   plat('shakshuka', 'Shakshuka (œufs à la tomate et poivron), pain', 10, 20, { proteine: 'oeufs', saisons: EA },
     [i('Œufs', 2, 'pièce'), i('Tomate', 150), i('Poivron', 80), i('Oignon', 0.25, 'pièce'), i('Pain complet', 60)]),
+  plat('croque-monsieur', 'Croque-monsieur béchamel aux champignons, salade', 15, 12, { proteine: 'laitier', julieAime: true, saisons: AHP,
+    recette: `Tartiner les tranches de pain de mie de béchamel (beurre, farine, lait), ajouter des champignons émincés poêlés et l'emmental, refermer, un peu de béchamel et d'emmental sur le dessus, 10-12 min au four à 200 °C.` },
+    [i('Pain de mie', 2, 'tranche'), i('Champignons de Paris', 60), i('Emmental râpé', 30), i('Lait', 60, 'ml'), i('Farine', 6), i('Beurre', 6), i('Salade', 40)]),
   plat('galettes', 'Galettes complètes œuf-fromage-champignons', 10, 10, { proteine: 'oeufs', martin: 'aime' },
     [i('Galettes de sarrasin', 2, 'pièce'), i('Œufs', 1, 'pièce'), i('Emmental râpé', 30), i('Champignons de Paris', 50), i('Salade', 30)]),
 
@@ -80,8 +83,14 @@ export const PLATS_DEPART = [
     [i('Gnocchis', 150), i('Coulis de tomate', 80), i('Mozzarella', 40), i('Salade', 30)]),
   plat('coquillettes-pois', 'Coquillettes, petits pois et emmental', 5, 10, { proteine: 'laitier', martin: 'aime' },
     [i('Coquillettes semi-complètes', 90), i('Petits pois surgelés', 80), i('Emmental râpé', 25), i('Beurre', 5)]),
-  plat('pates-pesto', 'Pâtes au pesto, haricots verts et parmesan', 10, 12, { proteine: 'laitier', saisons: E },
-    [i('Pâtes semi-complètes', 100), i('Pesto', 30), i('Haricots verts', 100), i('Parmesan', 15)]),
+  plat('carbonara-veg', 'Carbonara végétarienne au tofu fumé', 10, 15, { proteine: 'oeufs', martin: 'aime',
+    recette: `Pour 4 : 400 g de pâtes, 250 g de tofu fumé, 2 œufs entiers + 3 jaunes, 80 g de parmesan (ou fromage italien à pâte dure végétarien), poivre.
+1. Couper le tofu fumé en petits dés et le faire dorer 8-10 min à la poêle avec un filet d'huile, jusqu'à ce qu'il soit bien grillé (c'est lui qui remplace le lard : croustillant et fumé). Option : une pincée de paprika fumé.
+2. Battre les œufs et les jaunes avec le fromage râpé et beaucoup de poivre.
+3. Cuire les pâtes al dente et garder une louche d'eau de cuisson.
+4. Hors du feu, mélanger les pâtes égouttées avec le tofu, verser le mélange œufs-fromage et remuer vite en ajoutant l'eau de cuisson petit à petit : la sauce devient crémeuse sans cuire en omelette.
+Pas de crème : c'est l'œuf, le fromage et l'eau des pâtes qui font la sauce.` },
+    [i('Pâtes semi-complètes', 100), i('Tofu fumé', 60), i('Œufs', 1.25, 'pièce'), i('Parmesan', 20)]),
   plat('salade-quinoa', 'Salade de quinoa, feta, concombre et tomate', 15, 15, { proteine: 'laitier', leger: true, saisons: E },
     [i('Quinoa', 60), i('Feta', 50), i('Concombre', 80), i('Tomate', 100), i('Olives', 10)]),
   plat('ratatouille', 'Ratatouille, semoule et œuf au plat', 25, 45, { proteine: 'oeufs', rechauffe: true, double: true, saisons: E },

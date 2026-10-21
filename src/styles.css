@@ -127,3 +127,4 @@ details > summary { cursor: pointer; padding: 6px 0; font-weight: 600; }
 .verif { padding: 8px 0; border-bottom: 1px solid var(--ligne); }
 .verif:last-child { border-bottom: 0; }
 .carte.a-repondre { border-color: var(--alerte); }
+.recette { white-space: pre-line; font-size: .85rem; margin-top: 4px; }
