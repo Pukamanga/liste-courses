@@ -187,3 +187,12 @@ describe('plats que Julie aime', () => {
     expect(scoreB(avec) - scoreB(sans)).toBeCloseTo(1.5, 1);
   });
 });
+
+describe('plats supprimés', () => {
+  it('un repas dont le plat n’existe plus est re-proposé', () => {
+    const cr = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R).creneaux.soir];
+    const menus = { [cr[0].id]: { platId: 'raclette-disparue', auto: true } };
+    const res = proposer(cr, { omelette: PLATS.omelette }, menus, R, { graine: 's' });
+    expect(res[cr[0].id].platId).toBe('omelette');
+  });
+});
