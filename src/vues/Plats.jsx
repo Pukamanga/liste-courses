@@ -23,6 +23,7 @@ export function resumePlat(p) {
     p.double && 'en double',
     p.consistant && 'consistant',
     p.leger && 'léger',
+    p.thermomix && 'Thermomix',
     p.julieAime && 'Julie aime',
     p.martin === 'aime' && 'Martin aime',
     p.martin === 'naimePas' && 'Martin n’aime pas',
