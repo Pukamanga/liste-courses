@@ -36,6 +36,16 @@ export function scoreSaison(plat, mois) {
   return s + Math.min(dans, 3) * 0.5 - hors * 2;
 }
 
+// Une proposition automatique encore conforme aux règles actuelles ?
+// (plat toujours dans la base, pas de viande hors période grands-parents)
+export function propositionValide(m, creneau, plats, reglages) {
+  const plat = m?.platId && plats[m.platId];
+  if (!plat || plat.deleted) return false;
+  if (plat.proteine === 'viande' && reglages?.viandeAvecGrandsParentsSeulement !== false &&
+      !creneau.etiquettes?.includes(ETIQ.GP)) return false;
+  return true;
+}
+
 export function compatible(plat, creneau) {
   const e = creneau.etiquettes;
   if (e.includes(ETIQ.AVANCE) || e.includes(ETIQ.PLUSIEURS)) {
@@ -106,6 +116,8 @@ export function proposer(creneaux, plats, menus, reglages, options = {}) {
     const platExiste = m?.platId && plats[m.platId] && !plats[m.platId].deleted;
     if (!m || m.deleted || (!platExiste && !m.aucun)) continue;
     if (options.effacer && !m.verrouille && !estNote(m) && !m.aucun) continue;
+    // ancienne proposition qui ne respecte plus les règles : remplacée (sauf si verrouillée ou notée)
+    if (!m.aucun && !m.verrouille && !estNote(m) && !propositionValide(m, c, plats, reglages)) continue;
     resultat[c.id] = { ...m };
   }
   // un reste dont la source n'est plus là disparaît
