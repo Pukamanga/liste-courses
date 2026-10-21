@@ -174,7 +174,12 @@ les modifications sont envoyées au retour du réseau.
   propositions suivantes.
 
 ### Courses
-Coche ce que vous avez déjà, ajoute des articles en plus (fruits, goûters, produits du quotidien), puis :
+En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
+« … les goûters ? », « … des bananes ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
+(les fruits du goûter sont ceux de saison). La copie n'est possible qu'une fois les questions répondues. Questions et
+articles se modifient dans **Réglages → Questions avant les courses**.
+
+Coche ce que vous avez déjà, ajoute des articles en plus si besoin, puis :
 - **📋 Copier** : la liste (un article par ligne), à coller dans la liste de courses de l'app Leclerc Drive ;
 - **🤖 Copier la liste avec le prompt Claude** : un texte complet à coller dans Claude, qui doit pouvoir piloter
   le navigateur (extension **Claude dans Chrome**). Claude ouvre Leclerc Drive et remplit le panier en privilégiant
@@ -260,7 +265,7 @@ tests/               tests unitaires
 - Les plats de départ sont identiques sur les deux téléphones et ne sont envoyés à Supabase qu'une fois
   modifiés. Quand une nouvelle version de la base est publiée, les plats de départ jamais modifiés sont
   remplacés automatiquement ; ceux que vous avez modifiés ou créés sont conservés.
-- La liste de courses ne couvre que les repas prévus : fruits, petits-déjeuners et goûters sont à ajouter
-  dans « En plus ».
+- Les articles des questions avant les courses ont des quantités fixes (à ajuster dans les réglages) : elles ne
+  sont pas calculées selon le nombre de convives.
 - Pas de photos ni de recettes détaillées dans les fiches plats (nom, temps, étiquettes et ingrédients
   seulement).

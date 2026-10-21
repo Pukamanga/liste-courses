@@ -158,6 +158,11 @@ export function Reglages() {
       </details>
 
       <details class="carte">
+        <summary>Questions avant les courses</summary>
+        <Verifications liste={R.verifications} />
+      </details>
+
+      <details class="carte">
         <summary>Vacances scolaires (zone A)</summary>
         <EditeurJSON valeur={R.vacances} onChange={(v) => majCle('vacances', v)}
           aide='Liste de {"nom", "debut" (1er jour sans école), "reprise" (jour de la rentrée)}. À vérifier sur education.gouv.fr.'
@@ -261,6 +266,34 @@ function EditeurJSON({ valeur, onChange, aide, valider }) {
         } catch (e) { setErreur(`Non enregistré : ${e.message}`); }
       }}>Enregistrer</button>
       {erreur && <span class="petit-texte"> {erreur}</span>}
+    </div>
+  );
+}
+
+function Verifications({ liste }) {
+  const maj = (i, k, v) => majCle('verifications', liste.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  return (
+    <div>
+      <p class="doux petit-texte">Posées chaque semaine dans l’onglet Courses. Si la réponse est « Non, à racheter », les articles
+        (un par ligne, au format « Nom — quantité ») sont ajoutés à la liste. « {'{fruits}'} » est remplacé par les fruits de saison.</p>
+      {liste.map((v, i) => (
+        <div key={v.id} style="border-top:1px solid var(--ligne);padding:8px 0">
+          <div class="rangee">
+            <input type="text" style="flex:1" value={v.question} onChange={(e) => maj(i, 'question', e.target.value)} />
+            <button class="btn petit danger" onClick={() => majCle('verifications', liste.filter((_, j) => j !== i))}>✕</button>
+          </div>
+          <label class="champ" style="margin-top:6px">Nom court
+            <input type="text" style="width:160px" value={v.titre} onChange={(e) => maj(i, 'titre', e.target.value)} />
+          </label>
+          <label class="champ" style="margin-top:6px">Articles à racheter
+            <textarea style="min-height:90px;font-family:inherit" value={(v.articles || []).join('\n')}
+              onChange={(e) => maj(i, 'articles', e.target.value.split('\n').map((t) => t.trim()).filter(Boolean))} />
+          </label>
+        </div>
+      ))}
+      <button class="btn petit" onClick={() => majCle('verifications', [...liste, { id: `verif-${Date.now()}`, titre: 'Nouveau', question: 'Reste-t-il … ?', articles: [] }])}>
+        + Question
+      </button>
     </div>
   );
 }

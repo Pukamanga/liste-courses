@@ -103,3 +103,27 @@ describe('prompt Claude pour Leclerc Drive', () => {
     expect(rayonDe({ nom: 'Boulgour' })).toBe('Épicerie salée');
   });
 });
+
+describe('questions avant les courses', () => {
+  it('ajoute les articles « à racheter » dans les bons rayons, avec les fruits du mois', async () => {
+    const { articlesVerifications, ajouterArticlesLibres } = await import('../src/moteur/courses.js');
+    const arts = articlesVerifications(R.verifications, { bananes: 'acheter', gouter: 'acheter', 'petit-dejeuner': 'reste' }, 10);
+    const textes = arts.map((a) => a.texte);
+    expect(textes).toContain('Bananes — 1,5 kg');
+    expect(textes.some((t) => t.startsWith('Pain'))).toBe(false); // petit-déjeuner : il en reste
+    expect(textes.find((t) => t.startsWith('Fruits de saison'))).toMatch(/pomme.*raisin/);
+    const groupes = ajouterArticlesLibres([{ rayon: 'Épicerie salée', articles: [{ cle: 'riz|g', texte: 'Riz — 100 g', plats: ['X'] }] }], arts);
+    const rayon = (debut) => groupes.find((g) => g.articles.some((a) => a.texte.startsWith(debut))).rayon;
+    expect(rayon('Bananes')).toBe('Fruits et légumes');
+    expect(rayon('Compotes')).toBe('Épicerie sucrée');
+    expect(rayon('Yaourts')).toBe('Crèmerie / fromages');
+    expect(rayon('Riz')).toBe('Épicerie salée');
+    const fl = groupes.find((g) => g.rayon === 'Fruits et légumes').articles;
+    expect(fl.find((a) => a.texte.startsWith('Bananes')).plats).toEqual(['Bananes']);
+  });
+
+  it('rien d’ajouté sans réponse « à racheter »', async () => {
+    const { articlesVerifications } = await import('../src/moteur/courses.js');
+    expect(articlesVerifications(R.verifications, {}, 10)).toEqual([]);
+  });
+});

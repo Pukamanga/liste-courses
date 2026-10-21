@@ -61,6 +61,15 @@ export const REGLAGES_DEFAUT = {
     magasin: '', // ex. « E.Leclerc Drive Grenoble Comboire »
     consignes: '', // consignes ajoutées au prompt Claude
   },
+  // Questions posées avant de copier la liste : si « À racheter », les articles sont ajoutés.
+  // {fruits} est remplacé par les fruits de saison du mois.
+  verifications: [
+    { id: 'petit-dejeuner', titre: 'Petit-déjeuner', question: 'Reste-t-il de quoi faire les petits-déjeuners ?',
+      articles: ['Pain complet — 2', 'Flocons d’avoine — 500 g', 'Lait — 2 L', 'Confiture — 1 pot', 'Beurre — 250 g'] },
+    { id: 'gouter', titre: 'Goûter', question: 'Reste-t-il de quoi faire les goûters ?',
+      articles: ['Compotes sans sucres ajoutés — 1 lot', 'Biscuits — 2 paquets', 'Yaourts nature — 8', 'Fruits de saison ({fruits}) — 1,5 kg'] },
+    { id: 'bananes', titre: 'Bananes', question: 'Reste-t-il des bananes ?', articles: ['Bananes — 1,5 kg'] },
+  ],
 };
 
 // Fusion profonde « réglages enregistrés » + défauts (les tableaux enregistrés remplacent les défauts).

@@ -1,5 +1,5 @@
 // Liste de courses : ingrédients additionnés, regroupés par rayon.
-import { normaliser } from './saisons.js';
+import { normaliser, fruitsDuMois } from './saisons.js';
 
 export const RAYONS = [
   'Fruits et légumes', 'Boucherie / volaille', 'Poissonnerie', 'Crèmerie / fromages',
@@ -11,7 +11,8 @@ const MOTS_RAYONS = [
   ['Fruits et légumes', ['ail', 'oignon', 'échalote', 'carotte', 'pomme de terre', 'champignon', 'persil', 'courgette',
     'aubergine', 'poivron', 'tomate', 'salade', 'poireau', 'navet', 'céleri', 'chou', 'brocoli', 'épinard', 'endive',
     'courge', 'potiron', 'concombre', 'haricot vert', 'citron', 'menthe', 'basilic', 'pomme', 'poire', 'fenouil',
-    'radis', 'betterave', 'panais', 'mâche', 'petits pois', 'coriandre', 'gingembre']],
+    'radis', 'betterave', 'panais', 'mâche', 'petits pois', 'coriandre', 'gingembre', 'banane', 'fruit', 'kiwi',
+    'clémentine', 'orange', 'raisin', 'fraise', 'abricot', 'pêche', 'prune', 'melon']],
   ['Poissonnerie', ['saumon', 'cabillaud', 'colin', 'crevette', 'merlu', 'poisson frais']],
   ['Boucherie / volaille', ['bœuf', 'boeuf', 'veau', 'porc', 'poulet', 'dinde', 'agneau', 'steak', 'merguez', 'saucisse',
     'chair à saucisse', 'canard']],
@@ -21,7 +22,7 @@ const MOTS_RAYONS = [
     'reblochon', 'raclette', 'fromage', 'yaourt', 'comté', 'chèvre', 'feta', 'ricotta', 'cheddar']],
   ['Boulangerie', ['pain', 'baguette']],
   ['Surgelés', ['surgelé', 'poisson pané', 'frites']],
-  ['Épicerie sucrée', ['sucre', 'chocolat', 'confiture', 'miel']],
+  ['Épicerie sucrée', ['sucre', 'chocolat', 'confiture', 'miel', 'compote', 'biscuit', 'céréales', 'flocons', 'gâteau']],
   ['Épicerie salée', ['pâtes', 'spaghetti', 'coquillettes', 'lasagne', 'riz', 'semoule', 'lentille', 'pois chiche',
     'haricots rouges', 'farine', 'coulis', 'coulis de tomate', 'sauce tomate', 'concentré de tomate', 'sauce', 'huile', 'vinaigre', 'moutarde', 'bouillon', 'thon', 'olive',
     'lait de coco', 'curry', 'épice', 'pesto', 'tortilla', 'vin', 'cornichon', 'chapelure', 'boulgour', 'quinoa',
@@ -98,6 +99,26 @@ export function listeCourses(creneaux, menus, plats, idsSemaine) {
   }
   return RAYONS.filter((r) => groupes[r])
     .map((r) => ({ rayon: r, articles: groupes[r].sort((x, y) => x.nom.localeCompare(y.nom, 'fr')) }));
+}
+
+// Articles à racheter d'après les réponses aux questions d'avant courses
+export function articlesVerifications(verifications = [], reponses = {}, mois) {
+  const fruits = fruitsDuMois(mois).join(', ');
+  return verifications
+    .filter((v) => reponses[v.id] === 'acheter')
+    .flatMap((v) => (v.articles || []).filter((t) => t.trim())
+      .map((t) => ({ texte: t.trim().replace('{fruits}', fruits || 'de saison'), origine: v.titre })));
+}
+
+// Range des articles en texte libre dans les rayons de la liste
+export function ajouterArticlesLibres(groupes, articles) {
+  const parRayon = Object.fromEntries(groupes.map((g) => [g.rayon, [...g.articles]]));
+  for (const a of articles) {
+    const nom = a.texte.split(' — ')[0];
+    const rayon = rayonDe({ nom });
+    (parRayon[rayon] ||= []).push({ cle: `libre|${normaliser(a.texte)}`, nom, texte: a.texte, plats: [a.origine], quantite: 0 });
+  }
+  return RAYONS.filter((r) => parRayon[r]?.length).map((r) => ({ rayon: r, articles: parRayon[r] }));
 }
 
 export function texteACopier(groupes, coches = {}, extras = []) {
