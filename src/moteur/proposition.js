@@ -64,6 +64,12 @@ export function scorer(plat, creneau, ctx) {
     if (plat.martin === 'naimePas') s -= 4;
   }
   if (e.includes(ETIQ.VTT)) s += (plat.consistant ? 3 : 0) - (plat.leger ? 2 : 0);
+  // Viande : seulement quand les grands-parents sont là
+  if (plat.proteine === 'viande' && ctx.reglages?.viandeAvecGrandsParentsSeulement !== false) {
+    s += e.includes(ETIQ.GP) ? 2 : -8;
+  }
+  // Équilibre : varier la source de protéines d'un repas à l'autre
+  if (plat.proteine && (ctx.proteinesRecentes || []).includes(plat.proteine)) s -= 1.5;
   if (e.includes(ETIQ.CUISINE)) s += (plat.double ? 4 : 0) + (tempsTotal(plat) >= 45 ? 1 : 0);
   if (e.includes(ETIQ.PLUSIEURS)) s += 1;
   if (e.includes(ETIQ.EXPRESS) && tempsTotal(plat) <= 15) s += 1;
@@ -155,7 +161,10 @@ export function proposer(creneaux, plats, menus, reglages, options = {}) {
       const ds = (parPlat[platId] || []).map((d) => Math.abs(ecartJours(d, date)));
       return ds.length ? Math.min(...ds) : null;
     };
-    const ctx = { stats, graine, dernieresDates };
+    // protéines des deux derniers repas déjà prévus avant ce créneau
+    const proteinesRecentes = creneaux.slice(0, creneaux.indexOf(c)).reverse()
+      .map((x) => plats[resultat[x.id]?.platId]?.proteine).filter(Boolean).slice(0, 2);
+    const ctx = { stats, graine, dernieresDates, reglages, proteinesRecentes };
     const refus = new Set(menus[c.id]?.refus || []);
     const pasRecent = (p) => {
       const d = dernieresDates(p.id, c.date);

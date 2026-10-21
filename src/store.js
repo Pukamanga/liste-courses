@@ -84,12 +84,28 @@ export function lot(ops) {
   for (const e of ecrits) for (const f of ecouteursLocaux) f(e);
 }
 
-// Documents fournis par le code (plats de départ) : date 0, jamais envoyés tant qu'ils ne sont pas modifiés
-export function semer(coll, objets) {
+// Documents fournis par le code (plats de départ) : date 0, jamais envoyés tant qu'ils ne sont pas modifiés.
+// Quand `version` change, les documents de départ jamais modifiés (date 0) sont remplacés par la
+// nouvelle liste ; ceux que vous avez modifiés ou supprimés sont conservés tels quels.
+export function semer(coll, objets, version = 1) {
+  const cleVersion = `repas:semis:${coll}`;
+  let ancienne = 0;
+  try { ancienne = Number(localStorage.getItem(cleVersion)) || 0; } catch { /* hors navigateur */ }
   let change = false;
-  for (const o of objets) {
-    if (!docs[coll][o.id]) { docs[coll][o.id] = { data: o, updated_at: 0, deleted: false }; change = true; }
+  if (ancienne !== version) {
+    const ids = new Set(objets.map((o) => o.id));
+    for (const [id, d] of Object.entries(docs[coll])) {
+      if (d.updated_at === 0 && !ids.has(id)) { delete docs[coll][id]; change = true; }
+    }
   }
+  for (const o of objets) {
+    const d = docs[coll][o.id];
+    if (!d || (ancienne !== version && d.updated_at === 0)) {
+      docs[coll][o.id] = { data: o, updated_at: 0, deleted: false };
+      change = true;
+    }
+  }
+  try { localStorage.setItem(cleVersion, String(version)); } catch { /* hors navigateur */ }
   if (change) notifier();
 }
 

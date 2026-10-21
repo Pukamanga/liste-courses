@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import { doc, modifier } from '../store.js';
 import { semaine, reglages, nomDe } from '../calcul.js';
 import { ajouterJours, libelleDate, aujourdhui, depuisIso, MOIS_LONGS, lundiDe } from '../moteur/dates.js';
@@ -35,14 +36,23 @@ export function Etiquettes({ liste }) {
 
 export function Semaine({ lundi, setLundi, Repas, actions }) {
   const R = reglages();
-  const jours = semaine(lundi);
   const auj = aujourdhui();
+  const [voirPasses, setVoirPasses] = useState(false);
+  // Semaine en cours : la liste commence aujourd'hui, les jours passés sont repliés
+  const tous = semaine(lundi);
+  const passes = lundi === lundiDe(auj) ? tous.filter((j) => j.date < auj) : [];
+  const jours = voirPasses ? tous : tous.filter((j) => !passes.includes(j));
   const incomplets = jours.filter((j) => j.incomplet).length;
 
   return (
     <div>
       <NavSemaine lundi={lundi} setLundi={setLundi}>{actions}</NavSemaine>
       {incomplets > 0 && <div class="alerte">{incomplets} jour(s) sans planning complet : saisissez-les dans « Planning ».</div>}
+      {passes.length > 0 && (
+        <button class="btn petit" style="margin-bottom:10px" onClick={() => setVoirPasses(!voirPasses)}>
+          {voirPasses ? 'Masquer les jours passés' : `Voir les jours passés (${passes.length}) pour noter les repas`}
+        </button>
+      )}
       {jours.map((j) => (
         <div key={j.date} class={`carte ${j.date === auj ? 'aujourdhui' : ''} ${j.date < auj ? 'passe' : ''}`}>
           <div class="jour-titre">
@@ -67,13 +77,20 @@ export function Semaine({ lundi, setLundi, Repas, actions }) {
   );
 }
 
+const ACCORD = { julie: 'absente' };
+
 function Creneau({ c, jour, R, Repas }) {
-  const absent = doc('jours', c.date)?.martinAbsent?.[c.repas];
-  const martinPossible = c.martin || absent || (c.repas === 'soir') || !jour.ecole;
-  const basculerMartin = () => {
-    const j = doc('jours', c.date) || {};
-    modifier('jours', c.date, { martinAbsent: { ...(j.martinAbsent || {}), [c.repas]: !absent } });
+  const j = doc('jours', c.date) || {};
+  const absent = (qui) => !!j[`${qui}Absent`]?.[c.repas];
+  // Case affichée si la personne mangerait normalement à la maison à ce repas (ou est déjà marquée absente)
+  const possible = (qui) => absent(qui) || (qui === 'martin'
+    ? c.repas === 'soir' || !jour.ecole
+    : R.postes[jour.postes[qui]]?.[c.repas] === 'maison');
+  const basculer = (qui) => {
+    const cle = `${qui}Absent`;
+    modifier('jours', c.date, { [cle]: { ...(j[cle] || {}), [c.repas]: !absent(qui) } });
   };
+  const personnes = ['moi', 'julie', 'martin'].filter(possible);
   return (
     <div class="creneau">
       <div class="creneau-tete">
@@ -89,10 +106,14 @@ function Creneau({ c, jour, R, Repas }) {
       </div>
       {c.etiquettes.length > 0 && <div style="margin-top:6px"><Etiquettes liste={c.etiquettes} /></div>}
       {c.avertissements.map((w) => <div class="alerte" key={w}>⚠️ {w}</div>)}
-      {martinPossible && (
-        <label class="case doux" style="margin-top:6px">
-          <input type="checkbox" checked={!!absent} onChange={basculerMartin} /> {R.noms.martin} absent
-        </label>
+      {personnes.length > 0 && (
+        <div class="rangee" style="margin-top:6px;gap:12px">
+          {personnes.map((qui) => (
+            <label class="case doux" key={qui}>
+              <input type="checkbox" checked={absent(qui)} onChange={() => basculer(qui)} /> {R.noms[qui]} {ACCORD[qui] || 'absent'}
+            </label>
+          ))}
+        </div>
       )}
       {Repas && !c.vide && <Repas c={c} />}
     </div>

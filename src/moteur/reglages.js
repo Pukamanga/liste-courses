@@ -14,7 +14,7 @@ export const ETIQ = {
 
 // Toutes les règles de la famille. Chaque valeur est modifiable dans l'écran « Réglages ».
 export const REGLAGES_DEFAUT = {
-  noms: { moi: 'Moi', julie: 'Julie', martin: 'Martin' },
+  noms: { moi: 'Julien', julie: 'Julie', martin: 'Martin' },
   postes: {
     M: { libelle: 'Matin', debut: '06:15', fin: '14:15', midi: 'travail', soir: 'maison' },
     S: { libelle: 'Soir', debut: '13:15', fin: '21:15', midi: 'maison', soir: 'travail' },
@@ -42,6 +42,7 @@ export const REGLAGES_DEFAUT = {
   postesJourCuisine: ['R', 'CA', 'M'],
   joursEcole: [1, 2, 4, 5], // lundi, mardi, jeudi, vendredi
   portions: { adulte: 1, martin: 0.75, grandParent: 1, bonusVTT: 0.3 },
+  viandeAvecGrandsParentsSeulement: true, // viande proposée seulement quand les grands-parents sont là
   antiRepetitionJours: 10,
   restesMax: 2,
   restesFenetreJours: 2, // les restes sont mangés au plus tard 2 jours après
@@ -56,6 +57,22 @@ export const REGLAGES_DEFAUT = {
   // Activité ajoutée quand la case « VTT » est cochée sur un jour
   vttManuel: { id: 'vtt-manuel', nom: 'VTT', qui: 'moi', debut: '08:30', fin: '12:00', consistant: true },
   vacances: VACANCES_ZONE_A,
+  courses: {
+    magasin: '', // ex. « E.Leclerc Drive Grenoble Comboire »
+    consignes: '', // consignes ajoutées au prompt Claude
+  },
+  // Questions posées avant de copier la liste : si « À racheter », les articles sont ajoutés.
+  // type 'rappel' : question « As-tu pensé à… ? » (boutons « Pas besoin » / « Oui, à ajouter »).
+  // {fruits} est remplacé par les fruits de saison du mois.
+  verifications: [
+    { id: 'petit-dejeuner', titre: 'Petit-déjeuner', question: 'Reste-t-il de quoi faire les petits-déjeuners ?',
+      articles: ['Pain complet — 2', 'Flocons d’avoine — 500 g', 'Lait — 2 L'] },
+    { id: 'gouter', titre: 'Goûter', question: 'Reste-t-il de quoi faire les goûters ?',
+      articles: ['Compotes sans sucres ajoutés — 1 lot', 'Biscuits — 2 paquets', 'Fruits de saison ({fruits}) — 1,5 kg'] },
+    { id: 'bananes', titre: 'Bananes', question: 'Reste-t-il des bananes ?', articles: ['Bananes — 1,5 kg'] },
+    { id: 'yaourts-martin', type: 'rappel', titre: 'Yaourts de Martin', question: 'As-tu pensé aux yaourts de Martin ?',
+      articles: ['Yaourts pour Martin — 8'] },
+  ],
 };
 
 // Fusion profonde « réglages enregistrés » + défauts (les tableaux enregistrés remplacent les défauts).

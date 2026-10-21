@@ -147,3 +147,32 @@ describe('saisonnalité', () => {
     expect(res[cr[0].id].platId).toBe('soupe');
   });
 });
+
+describe('viande et équilibre', () => {
+  const veg = plat('veg', { proteine: 'legumineuses' });
+  const viande = plat('viande', { proteine: 'viande', martin: 'aime', consistant: true });
+
+  it('la viande n’est proposée que quand les grands-parents sont là', () => {
+    const sans = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R).creneaux.soir];
+    expect(proposer(sans, { veg, viande }, {}, R, { graine: 'v' })[sans[0].id].platId).toBe('veg');
+    const avec = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R, [{ debut: '2026-11-01', fin: '2026-11-05', nb: 2 }]).creneaux.soir];
+    expect(proposer(avec, { veg, viande }, {}, R, { graine: 'v' })[avec[0].id].platId).toBe('viande');
+  });
+
+  it('la règle viande se désactive dans les réglages', () => {
+    const R2 = fusionnerReglages({ viandeAvecGrandsParentsSeulement: false });
+    const cr = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R2).creneaux.soir];
+    expect(proposer(cr, { veg, viande }, {}, R2, { graine: 'v' })[cr[0].id].platId).toBe('viande');
+  });
+
+  it('on varie la source de protéines d’un repas à l’autre', () => {
+    const cr = creneauxSemaine({ '2026-11-02': { moi: 'R', julie: 'S' } }).slice(0, 2);
+    const plats = {
+      a1: plat('a1', { proteine: 'oeufs' }), a2: plat('a2', { proteine: 'oeufs' }),
+      b1: plat('b1', { proteine: 'legumineuses' }),
+    };
+    const menus = { [cr[0].id]: { platId: 'a1', verrouille: true } };
+    const res = proposer(cr, plats, menus, R, { graine: 'p' });
+    expect(res[cr[1].id].platId).toBe('b1');
+  });
+});

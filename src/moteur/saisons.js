@@ -49,6 +49,13 @@ export const PRODUITS_SAISON = {
   citron: T,
 };
 
+export const FRUITS = ['pomme', 'poire', 'fraise', 'cerise', 'abricot', 'pêche', 'melon', 'prune', 'raisin', 'figue',
+  'framboise', 'rhubarbe', 'kiwi', 'clémentine'];
+
+export function fruitsDuMois(mois) {
+  return FRUITS.filter((f) => PRODUITS_SAISON[f].includes(mois));
+}
+
 export const SAISONS = ['printemps', 'ete', 'automne', 'hiver'];
 export const LIBELLES_SAISONS = { printemps: 'Printemps', ete: 'Été', automne: 'Automne', hiver: 'Hiver' };
 

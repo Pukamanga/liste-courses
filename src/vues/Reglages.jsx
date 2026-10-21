@@ -135,8 +135,31 @@ export function Reglages() {
           <Nombre libelle="Portion grand-parent" valeur={R.portions.grandParent} onChange={(v) => set('portions', 'grandParent', v)} />
           <Nombre libelle="Portion en plus les jours de VTT" valeur={R.portions.bonusVTT} onChange={(v) => set('portions', 'bonusVTT', v)} />
         </div>
+        <label class="case" style="margin:8px 0">
+          <input type="checkbox" checked={R.viandeAvecGrandsParentsSeulement}
+            onChange={(e) => majCle('viandeAvecGrandsParentsSeulement', e.target.checked)} />
+          Viande seulement quand les grands-parents sont là
+        </label>
         <p class="doux petit-texte">Jours d’école (cantine) :</p>
         <JoursSemaine valeur={R.joursEcole} onChange={(v) => majCle('joursEcole', v)} />
+      </details>
+
+      <details class="carte">
+        <summary>Courses Leclerc Drive</summary>
+        <p class="doux petit-texte">Utilisés par le bouton « Copier la liste avec le prompt Claude ».</p>
+        <label class="champ">Magasin Leclerc Drive
+          <input type="text" placeholder="ex. E.Leclerc Drive …" value={R.courses.magasin}
+            onChange={(e) => set('courses', 'magasin', e.target.value.trim())} />
+        </label>
+        <label class="champ" style="margin-top:8px">Consignes en plus pour Claude
+          <textarea style="min-height:90px;font-family:inherit" placeholder="ex. Lait d’avoine plutôt que lait de vache. Budget max 120 €."
+            value={R.courses.consignes} onChange={(e) => set('courses', 'consignes', e.target.value.trim())} />
+        </label>
+      </details>
+
+      <details class="carte">
+        <summary>Questions avant les courses</summary>
+        <Verifications liste={R.verifications} />
       </details>
 
       <details class="carte">
@@ -243,6 +266,41 @@ function EditeurJSON({ valeur, onChange, aide, valider }) {
         } catch (e) { setErreur(`Non enregistré : ${e.message}`); }
       }}>Enregistrer</button>
       {erreur && <span class="petit-texte"> {erreur}</span>}
+    </div>
+  );
+}
+
+function Verifications({ liste }) {
+  const maj = (i, k, v) => majCle('verifications', liste.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  return (
+    <div>
+      <p class="doux petit-texte">Posées chaque semaine dans l’onglet Courses. Si la réponse est « Non, à racheter », les articles
+        (un par ligne, au format « Nom — quantité ») sont ajoutés à la liste. « {'{fruits}'} » est remplacé par les fruits de saison.</p>
+      {liste.map((v, i) => (
+        <div key={v.id} style="border-top:1px solid var(--ligne);padding:8px 0">
+          <div class="rangee">
+            <input type="text" style="flex:1" value={v.question} onChange={(e) => maj(i, 'question', e.target.value)} />
+            <button class="btn petit danger" onClick={() => majCle('verifications', liste.filter((_, j) => j !== i))}>✕</button>
+          </div>
+          <div class="rangee" style="margin-top:6px">
+            <label class="champ">Nom court
+              <input type="text" style="width:160px" value={v.titre} onChange={(e) => maj(i, 'titre', e.target.value)} />
+            </label>
+            <label class="champ">Type
+              <select value={v.type || ''} onChange={(e) => maj(i, 'type', e.target.value || null)}>
+                <option value="">Reste-t-il… ?</option><option value="rappel">As-tu pensé à… ?</option>
+              </select>
+            </label>
+          </div>
+          <label class="champ" style="margin-top:6px">Articles à racheter
+            <textarea style="min-height:90px;font-family:inherit" value={(v.articles || []).join('\n')}
+              onChange={(e) => maj(i, 'articles', e.target.value.split('\n').map((t) => t.trim()).filter(Boolean))} />
+          </label>
+        </div>
+      ))}
+      <button class="btn petit" onClick={() => majCle('verifications', [...liste, { id: `verif-${Date.now()}`, titre: 'Nouveau', question: 'Reste-t-il … ?', articles: [] }])}>
+        + Question
+      </button>
     </div>
   );
 }

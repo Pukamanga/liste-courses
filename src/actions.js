@@ -2,12 +2,14 @@
 import { donnees, doc, lot, mettre, modifier } from './store.js';
 import { reglages, creneauxAutour } from './calcul.js';
 import { proposer, restesDe } from './moteur/proposition.js';
-import { lundiDe } from './moteur/dates.js';
+import { lundiDe, aujourdhui } from './moteur/dates.js';
 
 const pareil = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
+// Ne touche jamais aux jours passés (ce qui a été mangé reste dans l'historique)
 export function proposerSemaine(lundi, effacer = false) {
-  const creneaux = creneauxAutour(lundi, 0);
+  const auj = aujourdhui();
+  const creneaux = creneauxAutour(lundi, 0).filter((c) => c.date >= auj);
   const menus = donnees('menus');
   const res = proposer(creneaux, donnees('plats'), menus, reglages(), { graine: lundi, effacer });
   const ops = [];

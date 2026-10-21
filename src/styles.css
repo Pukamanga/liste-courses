@@ -124,3 +124,6 @@ input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent); }
 .bandeau { font-size: .8rem; text-align: center; padding: 4px; background: var(--alerte-fond); color: var(--alerte); }
 .bandeau.ok { background: var(--accent-clair); color: var(--accent); }
 details > summary { cursor: pointer; padding: 6px 0; font-weight: 600; }
+.verif { padding: 8px 0; border-bottom: 1px solid var(--ligne); }
+.verif:last-child { border-bottom: 0; }
+.carte.a-repondre { border-color: var(--alerte); }

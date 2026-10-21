@@ -62,6 +62,21 @@ describe('qui mange où et à quelle heure', () => {
   });
 });
 
+describe('absences ponctuelles des adultes', () => {
+  it('Julie absente à midi, Julien absent le soir', () => {
+    const j = analyserJour('2026-11-07', { moi: 'R', julie: 'R', julieAbsent: { midi: true }, moiAbsent: { soir: true } }, R);
+    expect(j.creneaux.midi.moments[0].qui).toEqual(['moi', 'martin']);
+    expect(j.creneaux.soir.moments[0].qui).toEqual(['julie', 'martin']);
+  });
+
+  it('pas de jour de cuisine si le cuisinier est absent au dîner', () => {
+    const j = analyserJour('2026-11-02', { moi: 'R', julie: 'S', moiAbsent: { soir: true } }, R);
+    expect(j.jourCuisine).toBe(false);
+    expect(j.creneaux.soir.etiquettes).not.toContain(ETIQ.CUISINE);
+    expect(j.creneaux.soir.avertissements[0]).toMatch(/Aucun adulte/); // Martin seul : Julie est en S
+  });
+});
+
 describe('activités du soir et dîner en plusieurs temps', () => {
   it('mardi : Martin 19h30, Julie après la danse 20h30, moi après le volley 22h45', () => {
     const j = analyserJour('2026-11-03', { moi: 'M', julie: 'R' }, R);

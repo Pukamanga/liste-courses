@@ -10,8 +10,11 @@ de saison, avec les restes enchaînés. Elle produit aussi la liste de courses d
 - **Semaine** : moments de repas (heure + convives), temps de préparation, étiquettes
   (« Express 15 min », « Prêt à l'avance », « En plusieurs temps », « Jour de cuisine », « VTT », « Grands-parents »),
   proposition automatique, « Autre idée », verrouillage, notes après le repas.
-- **Plats** : 44 plats de départ modifiables (temps, étiquettes, saisons, ingrédients par personne).
-- **Courses** : ingrédients additionnés et regroupés par rayon, cases « déjà à la maison », bouton « Copier ».
+- **Plats** : 48 plats de départ, majoritairement végétariens et équilibrés (légumes + protéine + féculent), modifiables
+  (temps, étiquettes, saisons, protéine principale, ingrédients par personne). La viande n'est proposée que quand
+  les grands-parents sont là.
+- **Courses** : ingrédients additionnés et regroupés par rayon, cases « déjà à la maison », bouton « Copier » et
+  bouton « Copier la liste avec le prompt Claude » pour que Claude remplisse le panier Leclerc Drive.
 - **Réglages** : toutes les règles (horaires des postes, heures des repas, temps de cuisine, activités,
   vacances scolaires, portions…).
 - Synchronisation en temps réel entre nos deux téléphones (Supabase), utilisable hors connexion.
@@ -71,8 +74,22 @@ Dans Supabase, menu **Authentication** :
    - **Site URL** : `https://pukamanga.github.io/liste-courses/`
    - **Redirect URLs** → **Add URL** : `https://pukamanga.github.io/liste-courses/`
      (et, si tu veux tester en local, `http://localhost:5173/`)
-4. **Emails** → **Templates** → **Magic Link** : remplace le contenu par celui-ci, qui ajoute un **code à
-   6 chiffres** (indispensable pour l'app installée sur iPhone, voir l'étape 6) :
+4. **Envoi des e-mails par Gmail (obligatoire).** Sans serveur d'envoi personnel (« SMTP »), Supabase
+   bloque la modification des modèles d'e-mail, n'envoie qu'aux membres de l'équipe du projet (donc pas à
+   Julie) et pas plus de 2 e-mails par heure. Pour utiliser ton adresse Gmail :
+   1. Dans ton compte Google, active la **validation en deux étapes** (Sécurité), puis ouvre
+      <https://myaccount.google.com/apppasswords>, crée un mot de passe d'application nommé « Supabase » et
+      copie les 16 caractères.
+   2. Dans Supabase : **Authentication** → **Emails** → onglet **SMTP Settings** (selon la version, c'est
+      dans **Project Settings** → **Authentication**) → active **Enable custom SMTP** et remplis :
+      - Sender email : ton adresse Gmail ; Sender name : `Repas de la famille`
+      - Host : `smtp.gmail.com` ; Port : `465`
+      - Username : ton adresse Gmail ; Password : le mot de passe d'application (sans espaces)
+
+      Puis clique **Save**.
+5. **Emails** → **Templates** → **Magic Link** (modifiable une fois le SMTP enregistré) : remplace le
+   contenu par celui-ci, qui ajoute un **code à 6 chiffres** (indispensable pour l'app installée sur
+   iPhone, voir l'étape 6) :
 
    ```html
    <h2>Connexion à Repas de la famille</h2>
@@ -82,8 +99,8 @@ Dans Supabase, menu **Authentication** :
 
    Clique **Save**.
 
-> ℹ️ Le service d'e-mail intégré de Supabase est limité à quelques e-mails par heure. Ça suffit pour deux
-> personnes, puisque la session reste ouverte des semaines.
+> ℹ️ Gmail accepte plusieurs centaines d'envois par jour, largement assez pour deux personnes dont la
+> session reste ouverte des semaines.
 
 ### Étape 4 — Ajouter les secrets dans GitHub
 
@@ -157,8 +174,21 @@ les modifications sont envoyées au retour du réseau.
   propositions suivantes.
 
 ### Courses
-Coche ce que vous avez déjà, ajoute des articles en plus, puis **📋 Copier**. La liste (un article par
-ligne) est dans le presse-papiers, prête à coller dans la liste de courses de l'app Leclerc Drive.
+En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
+« … les goûters ? », « … des bananes ? », et le rappel « As-tu pensé aux yaourts de Martin ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
+(les fruits du goûter sont ceux de saison). La copie n'est possible qu'une fois les questions répondues. Questions et
+articles se modifient dans **Réglages → Questions avant les courses**.
+
+Coche ce que vous avez déjà, ajoute des articles en plus si besoin, puis :
+- **📋 Copier** : la liste (un article par ligne), à coller dans la liste de courses de l'app Leclerc Drive ;
+- **🤖 Copier la liste avec le prompt Claude** : un texte complet à coller dans Claude, qui doit pouvoir piloter
+  le navigateur (extension **Claude dans Chrome**). Claude ouvre Leclerc Drive et remplit le panier en privilégiant
+  le bio (Bio Village), les Nutri-Score A/B et les produits sans additifs à risque. Il s'arrête au panier :
+  **il ne valide pas la commande**, et il termine par un récapitulatif (prix, bio, Nutri-Score, remplacements).
+  Indique ton magasin et d'éventuelles consignes (budget, lait végétal…) dans **Réglages → Courses Leclerc Drive**.
+
+> Le score Yuka n'est pas affiché sur Leclerc Drive : le prompt demande à Claude d'appliquer les mêmes critères
+> (Nutri-Score, bio, additifs à risque, produit peu transformé) en lisant les fiches produits.
 
 ---
 
@@ -170,7 +200,8 @@ Toutes les valeurs ci-dessous se modifient dans **Réglages**.
 |---|---|
 | Midi | M, M2, F : au travail. S : à la maison à **12h00** (départ 12h45). R, CA : à la maison à **12h30**. |
 | Soir | S : au travail. Les autres : à la maison à **19h30**. |
-| Martin | Cantine les lundi, mardi, jeudi et vendredi. À la maison le mercredi, le week-end, pendant les vacances scolaires (zone A) et les jours fériés. Dîne toujours à la maison. Case « Martin absent » sur chaque repas. |
+| Martin | Cantine les lundi, mardi, jeudi et vendredi. À la maison le mercredi, le week-end, pendant les vacances scolaires (zone A) et les jours fériés. Dîne toujours à la maison. |
+| Absences | Cases « Julien absent », « Julie absente », « Martin absent » sur chaque repas : la personne est retirée des convives et ne compte plus comme cuisinier (un jour de cuisine dont le cuisinier est absent au dîner n'en est plus un). |
 | Mercredi | Théâtre puis cité des arts (hors vacances) : déjeuner à **12h15**, 15 min de cuisine au plus → « Express 15 min ». |
 | Mardi | Julie dîne vers 20h30 (danse, réglée par défaut de 19h00 à 20h15), moi vers 22h45 (volley). |
 | Jeudi | Moi : volley de 20h à 22h, dîner vers 22h15. |
@@ -180,6 +211,7 @@ Toutes les valeurs ci-dessous se modifient dans **Réglages**.
 | Jour de cuisine | L'un de vous est en R, CA ou M. Les plats longs et « en double » sont favorisés, et un plat en double remplit 1 ou 2 créneaux des 2 jours suivants (en priorité les soirs en plusieurs temps, puis ceux « prêt à l'avance » ou « express »). |
 | VTT | Mardi matin (avril–novembre) ou case cochée : repas « consistants » favorisés, portion +30 %. |
 | Grands-parents | Ajoutés à tous les repas à la maison (2 par défaut), peuvent garder Martin : pas d'avertissement M/S ni « aucun adulte avec Martin ». |
+| Viande et équilibre | Les plats « viande » ne sont proposés que pendant une période grands-parents (réglable). D'un repas à l'autre, la source de protéines varie (légumineuses, œufs, fromage, soja, poisson). |
 | Proposition | Score sans IA : saison du plat et des fruits et légumes du mois (calendrier France inclus), notes, préférences de Martin, consistant les jours de VTT, plats en double les jours de cuisine. Pas le même plat deux fois en 10 jours (hors restes). Un léger hasard, identique sur les deux téléphones, varie les semaines. |
 
 ---
@@ -207,7 +239,7 @@ src/moteur/          ← logique pure, sans interface, entièrement testée
   courses.js         agrégation des ingrédients par rayon
   import.js          lecture du JSON de planning
   reglages.js        règles par défaut (modifiables dans l'app)
-  plats-depart.js    les 44 plats de départ
+  plats-depart.js    les 48 plats de départ (VERSION_PLATS à incrémenter quand on les change)
 src/store.js         stockage local-first (localStorage) + file d'envoi
 src/sync.js          Supabase : connexion, envoi, lecture, temps réel
 src/vues/            écrans (Preact)
@@ -232,6 +264,9 @@ tests/               tests unitaires
   relancer depuis le tableau de bord Supabase. Les données restent aussi sur chaque téléphone.
 - Pas de week-end travaillé « un sur deux » calculé automatiquement : c'est la grille saisie qui fait foi.
 - Les plats de départ sont identiques sur les deux téléphones et ne sont envoyés à Supabase qu'une fois
-  modifiés.
+  modifiés. Quand une nouvelle version de la base est publiée, les plats de départ jamais modifiés sont
+  remplacés automatiquement ; ceux que vous avez modifiés ou créés sont conservés.
+- Les articles des questions avant les courses ont des quantités fixes (à ajuster dans les réglages) : elles ne
+  sont pas calculées selon le nombre de convives.
 - Pas de photos ni de recettes détaillées dans les fiches plats (nom, temps, étiquettes et ingrédients
   seulement).

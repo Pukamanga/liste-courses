@@ -66,10 +66,73 @@ describe('import JSON du planning', () => {
     expect(r.avertissements).toEqual(['2026-11-02 : Tous les deux en S']);
     expect(r.erreurs.length).toBe(2); // code X + date hors mois
     expect(r.manquants).toContain('2026-11-04 (jour absent)');
-    expect(r.manquants).toContain('2026-11-03 : poste de Moi manquant');
+    expect(r.manquants).toContain('2026-11-03 : poste de Julien manquant');
   });
 
   it('refuse un JSON illisible', () => {
     expect(analyserImport('{pas du json', R).erreurs[0]).toMatch(/illisible/);
+  });
+});
+
+describe('prompt Claude pour Leclerc Drive', () => {
+  it('contient les règles, la liste sans les articles cochés et les repas', async () => {
+    const { promptClaude } = await import('../src/moteur/courses.js');
+    const groupes = [{ rayon: 'Fruits et légumes', articles: [
+      { cle: 'carotte|g', texte: 'Carotte — 500 g', plats: ['Dahl'] },
+      { cle: 'oignon|pièce', texte: 'Oignon — 2', plats: ['Dahl'] },
+    ] }];
+    const p = promptClaude({
+      groupes, coches: { 'oignon|pièce': true }, extras: ['Bananes'], titreSemaine: '2 – 8 novembre',
+      repas: ['Lundi soir : Dahl (3 pers.)'], magasin: 'Leclerc Drive Test', consignes: 'Pas de lait de vache.',
+    });
+    expect(p).toContain('Carotte — 500 g  (pour : Dahl)');
+    expect(p).not.toContain('Oignon — 2');
+    expect(p).toContain('- Bananes');
+    expect(p).toMatch(/Bio en priorité/);
+    expect(p).toMatch(/Nutri-Score A ou B/);
+    expect(p).toMatch(/Ne valide pas la commande/);
+    expect(p).toContain('« Leclerc Drive Test »');
+    expect(p).toContain('Pas de lait de vache.');
+    expect(p).toContain('- Lundi soir : Dahl (3 pers.)');
+  });
+
+  it('rayons des nouveaux ingrédients', () => {
+    expect(rayonDe({ nom: 'Petits pois surgelés' })).toBe('Surgelés');
+    expect(rayonDe({ nom: 'Tofu fumé' })).toBe('Traiteur / charcuterie');
+    expect(rayonDe({ nom: 'Ricotta' })).toBe('Crèmerie / fromages');
+    expect(rayonDe({ nom: 'Boulgour' })).toBe('Épicerie salée');
+  });
+});
+
+describe('questions avant les courses', () => {
+  it('ajoute les articles « à racheter » dans les bons rayons, avec les fruits du mois', async () => {
+    const { articlesVerifications, ajouterArticlesLibres } = await import('../src/moteur/courses.js');
+    const arts = articlesVerifications(R.verifications, { bananes: 'acheter', gouter: 'acheter', 'petit-dejeuner': 'reste' }, 10);
+    const textes = arts.map((a) => a.texte);
+    expect(textes).toContain('Bananes — 1,5 kg');
+    expect(textes.some((t) => t.startsWith('Pain'))).toBe(false); // petit-déjeuner : il en reste
+    expect(textes.find((t) => t.startsWith('Fruits de saison'))).toMatch(/pomme.*raisin/);
+    const groupes = ajouterArticlesLibres([{ rayon: 'Épicerie salée', articles: [{ cle: 'riz|g', texte: 'Riz — 100 g', plats: ['X'] }] }], arts);
+    const rayon = (debut) => groupes.find((g) => g.articles.some((a) => a.texte.startsWith(debut))).rayon;
+    expect(rayon('Bananes')).toBe('Fruits et légumes');
+    expect(rayon('Compotes')).toBe('Épicerie sucrée');
+    expect(textes).not.toContain('Yaourts pour Martin — 8'); // rappel sans réponse « à ajouter »
+    expect(rayon('Riz')).toBe('Épicerie salée');
+    const fl = groupes.find((g) => g.rayon === 'Fruits et légumes').articles;
+    expect(fl.find((a) => a.texte.startsWith('Bananes')).plats).toEqual(['Bananes']);
+  });
+
+  it('rappel « As-tu pensé aux yaourts de Martin ? »', async () => {
+    const { articlesVerifications, ajouterArticlesLibres } = await import('../src/moteur/courses.js');
+    const arts = articlesVerifications(R.verifications, { 'yaourts-martin': 'acheter' }, 10);
+    expect(arts.map((a) => a.texte)).toEqual(['Yaourts pour Martin — 8']);
+    expect(ajouterArticlesLibres([], arts)[0].rayon).toBe('Crèmerie / fromages');
+    const pdj = R.verifications.find((v) => v.id === 'petit-dejeuner').articles.join(' ');
+    expect(pdj).not.toMatch(/Confiture|Beurre/);
+  });
+
+  it('rien d’ajouté sans réponse « à racheter »', async () => {
+    const { articlesVerifications } = await import('../src/moteur/courses.js');
+    expect(articlesVerifications(R.verifications, {}, 10)).toEqual([]);
   });
 });

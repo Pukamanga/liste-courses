@@ -5,14 +5,19 @@ import { statsNotes, tempsTotal } from '../moteur/proposition.js';
 import { SAISONS, LIBELLES_SAISONS } from '../moteur/saisons.js';
 import { rayonDe } from '../moteur/courses.js';
 
+export const PROTEINES = {
+  legumineuses: '🫘 Légumineuses', oeufs: '🥚 Œufs', laitier: '🧀 Fromage / laitages', soja: '🌱 Soja / tofu',
+  poisson: '🐟 Poisson', viande: '🥩 Viande',
+};
 const UNITES = ['g', 'ml', 'pièce', 'tranche', 'gousse', 'botte', 'c. à soupe'];
 const NOUVEAU = () => ({
   id: `plat-${Date.now()}`, nom: '', prep: 15, cuisson: 20, rechauffe: false, double: false,
-  consistant: false, leger: false, martin: null, saisons: [], ingredients: [{ nom: '', qte: 100, unite: 'g' }],
+  consistant: false, leger: false, martin: null, saisons: [], proteine: 'legumineuses', ingredients: [{ nom: '', qte: 100, unite: 'g' }],
 });
 
 export function resumePlat(p) {
   return [
+    p.proteine && PROTEINES[p.proteine].split(' ')[0],
     `${tempsTotal(p)} min`,
     p.rechauffe && 'se réchauffe',
     p.double && 'en double',
@@ -27,6 +32,7 @@ export function resumePlat(p) {
 export function Plats() {
   const [recherche, setRecherche] = useState('');
   const [edition, setEdition] = useState(null);
+  const [filtre, setFiltre] = useState('');
   const plats = donnees('plats');
   const stats = statsNotes(donnees('menus'));
 
@@ -35,6 +41,7 @@ export function Plats() {
   const q = recherche.trim().toLowerCase();
   const liste = Object.values(plats)
     .filter((p) => !q || p.nom.toLowerCase().includes(q) || p.ingredients?.some((i) => i.nom.toLowerCase().includes(q)))
+    .filter((p) => !filtre || p.proteine === filtre)
     .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
 
   return (
@@ -45,6 +52,12 @@ export function Plats() {
       </div>
       <input type="text" placeholder="Rechercher un plat ou un ingrédient" style="width:100%;margin-bottom:10px"
         value={recherche} onInput={(e) => setRecherche(e.target.value)} />
+      <div class="rangee" style="margin-bottom:10px">
+        <button class={`btn petit ${!filtre ? 'actif' : ''}`} onClick={() => setFiltre('')}>Tous</button>
+        {Object.entries(PROTEINES).map(([k, l]) => (
+          <button key={k} class={`btn petit ${filtre === k ? 'actif' : ''}`} onClick={() => setFiltre(filtre === k ? '' : k)}>{l}</button>
+        ))}
+      </div>
       <div class="carte liste-plats">
         {liste.map((p) => {
           const s = stats[p.id];
@@ -102,6 +115,12 @@ function Formulaire({ initial, onFini }) {
             <label class="case" key={k}><input type="checkbox" checked={!!p[k]} onChange={(e) => maj(k, e.target.checked)} />{l}</label>
           ))}
         </div>
+        <label class="champ" style="margin-top:8px">Protéine principale
+          <select value={p.proteine || ''} onChange={(e) => maj('proteine', e.target.value || null)}>
+            <option value="">—</option>
+            {Object.entries(PROTEINES).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+          </select>
+        </label>
         <label class="champ" style="margin-top:8px">Martin
           <select value={p.martin || ''} onChange={(e) => maj('martin', e.target.value || null)}>
             <option value="">—</option><option value="aime">Martin aime</option><option value="naimePas">Martin n’aime pas</option>
