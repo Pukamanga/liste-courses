@@ -77,13 +77,20 @@ export function Semaine({ lundi, setLundi, Repas, actions }) {
   );
 }
 
+const ACCORD = { julie: 'absente' };
+
 function Creneau({ c, jour, R, Repas }) {
-  const absent = doc('jours', c.date)?.martinAbsent?.[c.repas];
-  const martinPossible = c.martin || absent || (c.repas === 'soir') || !jour.ecole;
-  const basculerMartin = () => {
-    const j = doc('jours', c.date) || {};
-    modifier('jours', c.date, { martinAbsent: { ...(j.martinAbsent || {}), [c.repas]: !absent } });
+  const j = doc('jours', c.date) || {};
+  const absent = (qui) => !!j[`${qui}Absent`]?.[c.repas];
+  // Case affichée si la personne mangerait normalement à la maison à ce repas (ou est déjà marquée absente)
+  const possible = (qui) => absent(qui) || (qui === 'martin'
+    ? c.repas === 'soir' || !jour.ecole
+    : R.postes[jour.postes[qui]]?.[c.repas] === 'maison');
+  const basculer = (qui) => {
+    const cle = `${qui}Absent`;
+    modifier('jours', c.date, { [cle]: { ...(j[cle] || {}), [c.repas]: !absent(qui) } });
   };
+  const personnes = ['moi', 'julie', 'martin'].filter(possible);
   return (
     <div class="creneau">
       <div class="creneau-tete">
@@ -99,10 +106,14 @@ function Creneau({ c, jour, R, Repas }) {
       </div>
       {c.etiquettes.length > 0 && <div style="margin-top:6px"><Etiquettes liste={c.etiquettes} /></div>}
       {c.avertissements.map((w) => <div class="alerte" key={w}>⚠️ {w}</div>)}
-      {martinPossible && (
-        <label class="case doux" style="margin-top:6px">
-          <input type="checkbox" checked={!!absent} onChange={basculerMartin} /> {R.noms.martin} absent
-        </label>
+      {personnes.length > 0 && (
+        <div class="rangee" style="margin-top:6px;gap:12px">
+          {personnes.map((qui) => (
+            <label class="case doux" key={qui}>
+              <input type="checkbox" checked={absent(qui)} onChange={() => basculer(qui)} /> {R.noms[qui]} {ACCORD[qui] || 'absent'}
+            </label>
+          ))}
+        </div>
       )}
       {Repas && !c.vide && <Repas c={c} />}
     </div>

@@ -66,7 +66,7 @@ describe('import JSON du planning', () => {
     expect(r.avertissements).toEqual(['2026-11-02 : Tous les deux en S']);
     expect(r.erreurs.length).toBe(2); // code X + date hors mois
     expect(r.manquants).toContain('2026-11-04 (jour absent)');
-    expect(r.manquants).toContain('2026-11-03 : poste de Moi manquant');
+    expect(r.manquants).toContain('2026-11-03 : poste de Julien manquant');
   });
 
   it('refuse un JSON illisible', () => {

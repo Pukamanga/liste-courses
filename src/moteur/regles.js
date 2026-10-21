@@ -123,15 +123,18 @@ export function analyserJour(date, jour = {}, reglages, periodesGP = []) {
   const activites = activitesDuJour(date, jour, reglages);
   const actives = activites.filter((a) => !a.ignoree);
   const vtt = actives.some((a) => a.qui === 'moi' && a.consistant);
-  const cuisiniers = PERSONNES.filter((p) => reglages.postesJourCuisine.includes(postes[p]));
+  // Absences ponctuelles par repas : jour.moiAbsent / julieAbsent / martinAbsent = { midi, soir }
+  const absentDe = (qui) => jour[`${qui}Absent`] || {};
+  // Jour de cuisine : un cuisinier (R, CA, M) est là pour le dîner
+  const cuisiniers = PERSONNES.filter((p) => reglages.postesJourCuisine.includes(postes[p]) && !absentDe(p).soir);
   const jourCuisine = cuisiniers.length > 0;
   const trajet = reglages.trajetMin;
   const actDe = (qui) => actives.filter((a) => a.qui === qui);
-  const absent = jour.martinAbsent || {};
+  const absent = absentDe('martin');
 
   // ---------- Midi ----------
   const midi = (() => {
-    const qui = PERSONNES.filter((p) => reglages.postes[postes[p]].midi === 'maison');
+    const qui = PERSONNES.filter((p) => reglages.postes[postes[p]].midi === 'maison' && !absentDe(p).midi);
     const martinMaison = !ecole && !absent.midi;
     if (martinMaison) qui.push('martin');
     if (gp) qui.push('gp');
@@ -161,7 +164,7 @@ export function analyserJour(date, jour = {}, reglages, periodesGP = []) {
     const entrees = [];
     const hDiner = enMinutes(reglages.heures.diner);
     for (const p of PERSONNES) {
-      if (reglages.postes[postes[p]].soir !== 'maison') continue;
+      if (reglages.postes[postes[p]].soir !== 'maison' || absentDe(p).soir) continue;
       const act = actDe(p).find((a) => a.repas === 'soir');
       entrees.push({ qui: p, min: act ? enMinutes(act.heureRepas) : hDiner });
     }

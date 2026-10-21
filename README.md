@@ -200,7 +200,8 @@ Toutes les valeurs ci-dessous se modifient dans **Réglages**.
 |---|---|
 | Midi | M, M2, F : au travail. S : à la maison à **12h00** (départ 12h45). R, CA : à la maison à **12h30**. |
 | Soir | S : au travail. Les autres : à la maison à **19h30**. |
-| Martin | Cantine les lundi, mardi, jeudi et vendredi. À la maison le mercredi, le week-end, pendant les vacances scolaires (zone A) et les jours fériés. Dîne toujours à la maison. Case « Martin absent » sur chaque repas. |
+| Martin | Cantine les lundi, mardi, jeudi et vendredi. À la maison le mercredi, le week-end, pendant les vacances scolaires (zone A) et les jours fériés. Dîne toujours à la maison. |
+| Absences | Cases « Julien absent », « Julie absente », « Martin absent » sur chaque repas : la personne est retirée des convives et ne compte plus comme cuisinier (un jour de cuisine dont le cuisinier est absent au dîner n'en est plus un). |
 | Mercredi | Théâtre puis cité des arts (hors vacances) : déjeuner à **12h15**, 15 min de cuisine au plus → « Express 15 min ». |
 | Mardi | Julie dîne vers 20h30 (danse, réglée par défaut de 19h00 à 20h15), moi vers 22h45 (volley). |
 | Jeudi | Moi : volley de 20h à 22h, dîner vers 22h15. |

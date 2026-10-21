@@ -14,7 +14,7 @@ export const ETIQ = {
 
 // Toutes les règles de la famille. Chaque valeur est modifiable dans l'écran « Réglages ».
 export const REGLAGES_DEFAUT = {
-  noms: { moi: 'Moi', julie: 'Julie', martin: 'Martin' },
+  noms: { moi: 'Julien', julie: 'Julie', martin: 'Martin' },
   postes: {
     M: { libelle: 'Matin', debut: '06:15', fin: '14:15', midi: 'travail', soir: 'maison' },
     S: { libelle: 'Soir', debut: '13:15', fin: '21:15', midi: 'maison', soir: 'travail' },
