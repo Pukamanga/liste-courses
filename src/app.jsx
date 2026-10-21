@@ -4,7 +4,7 @@ import { PLATS_DEPART, VERSION_PLATS } from './moteur/plats-depart.js';
 import { Plats } from './vues/Plats.jsx';
 import { Courses } from './vues/Courses.jsx';
 import { Repas } from './vues/Repas.jsx';
-import { proposerSemaine } from './actions.js';
+import { proposerSemaine, nettoyerPropositions } from './actions.js';
 import { Reglages } from './vues/Reglages.jsx';
 import { Connexion } from './vues/Connexion.jsx';
 import { configure, supabase, initialiserSync, surSession, useSync } from './sync.js';
@@ -13,6 +13,7 @@ import { Semaine } from './vues/Semaine.jsx';
 import { Planning } from './vues/Planning.jsx';
 
 semer('plats', PLATS_DEPART, VERSION_PLATS);
+nettoyerPropositions();
 
 const ONGLETS = [
   { id: 'semaine', libelle: 'Semaine', icone: '🍽️' },

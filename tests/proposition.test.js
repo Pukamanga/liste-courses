@@ -196,3 +196,27 @@ describe('plats supprimés', () => {
     expect(res[cr[0].id].platId).toBe('omelette');
   });
 });
+
+describe('anciennes propositions devenues non conformes', () => {
+  const veg = plat('veg', { proteine: 'legumineuses' });
+  const viande = plat('hachis', { proteine: 'viande' });
+  const cr = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R).creneaux.soir];
+
+  it('une viande proposée hors grands-parents est remplacée', () => {
+    const res = proposer(cr, { veg, hachis: viande }, { [cr[0].id]: { platId: 'hachis', auto: true } }, R, { graine: 'n' });
+    expect(res[cr[0].id].platId).toBe('veg');
+  });
+
+  it('mais pas si elle est verrouillée ou notée', () => {
+    const v = proposer(cr, { veg, hachis: viande }, { [cr[0].id]: { platId: 'hachis', verrouille: true } }, R, { graine: 'n' });
+    expect(v[cr[0].id].platId).toBe('hachis');
+    const n = proposer(cr, { veg, hachis: viande }, { [cr[0].id]: { platId: 'hachis', note: 'refaire' } }, R, { graine: 'n' });
+    expect(n[cr[0].id].platId).toBe('hachis');
+  });
+
+  it('et elle reste valable pendant une période grands-parents', () => {
+    const avec = [analyserJour('2026-11-02', { moi: 'M2', julie: 'S' }, R, [{ debut: '2026-11-01', fin: '2026-11-03', nb: 2 }]).creneaux.soir];
+    const res = proposer(avec, { veg, hachis: viande }, { [avec[0].id]: { platId: 'hachis', auto: true } }, R, { graine: 'n' });
+    expect(res[avec[0].id].platId).toBe('hachis');
+  });
+});

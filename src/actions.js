@@ -1,8 +1,8 @@
 // Actions sur les menus (proposition, « Autre idée », choix manuel, notes).
 import { donnees, doc, lot, mettre, modifier } from './store.js';
 import { reglages, creneauxAutour } from './calcul.js';
-import { proposer, restesDe } from './moteur/proposition.js';
-import { lundiDe, aujourdhui } from './moteur/dates.js';
+import { proposer, restesDe, propositionValide } from './moteur/proposition.js';
+import { lundiDe, aujourdhui, ajouterJours } from './moteur/dates.js';
 
 const pareil = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -68,4 +68,23 @@ export function basculerMartinAime(c) {
 
 export function enregistrerPlat(plat) {
   mettre('plats', plat.id, plat);
+}
+
+// Au démarrage : remplace les propositions à venir devenues contraires aux règles
+// (plat supprimé, viande hors grands-parents), sur la semaine en cours et la suivante.
+export function nettoyerPropositions() {
+  const auj = aujourdhui();
+  const plats = donnees('plats');
+  const R = reglages();
+  let n = 0;
+  for (const lundi of [lundiDe(auj), ajouterJours(lundiDe(auj), 7)]) {
+    const menus = donnees('menus');
+    const aRevoir = creneauxAutour(lundi, 0).some((c) => {
+      const m = menus[c.id];
+      return c.date >= auj && m?.platId && !m.verrouille && !m.note && !m.martinAime &&
+        !propositionValide(m, c, plats, R);
+    });
+    if (aRevoir) n += proposerSemaine(lundi);
+  }
+  return n;
 }
