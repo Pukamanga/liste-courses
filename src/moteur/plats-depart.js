@@ -5,7 +5,7 @@
 // Tout est modifiable dans l'écran « Plats ».
 
 // À incrémenter quand cette liste change : les plats de départ jamais modifiés sont alors mis à jour.
-export const VERSION_PLATS = 3;
+export const VERSION_PLATS = 4;
 
 const i = (nom, qte, unite = 'g') => ({ nom, qte, unite });
 const A = ['automne'], H = ['hiver'], E = ['ete'];
@@ -68,8 +68,6 @@ export const PLATS_DEPART = [
     [i('Pâtes à lasagnes', 70), i('Épinards surgelés', 150), i('Ricotta', 60), i('Coulis de tomate', 100), i('Mozzarella', 30)]),
   plat('gratin-dauphinois', 'Gratin dauphinois, salade et œuf dur', 20, 60, { proteine: 'laitier', rechauffe: true, consistant: true, martin: 'aime', saisons: AH },
     [i('Pomme de terre', 300), i('Crème fraîche', 50, 'ml'), i('Lait', 80, 'ml'), i('Œufs', 1, 'pièce'), i('Salade', 40)]),
-  plat('tartiflette-veg', 'Tartiflette aux champignons', 20, 40, { proteine: 'laitier', rechauffe: true, consistant: true, saisons: H },
-    [i('Pomme de terre', 280), i('Reblochon', 0.25, 'pièce'), i('Champignons de Paris', 80), i('Oignon', 0.25, 'pièce'), i('Salade', 40)]),
   plat('gratin-chou-fleur', 'Gratin de chou-fleur et pommes de terre', 15, 35, { proteine: 'laitier', rechauffe: true, double: true, martin: 'naimePas', saisons: AH },
     [i('Chou-fleur', 200), i('Pomme de terre', 150), i('Lait', 100, 'ml'), i('Farine', 10), i('Beurre', 10), i('Comté râpé', 30)]),
   plat('endives-comte', 'Gratin d’endives au comté, riz', 15, 30, { proteine: 'laitier', rechauffe: true, saisons: H },
@@ -78,8 +76,6 @@ export const PLATS_DEPART = [
     [i('Riz arborio', 80), i('Champignons de Paris', 120), i('Parmesan', 25), i('Bouillon de légumes', 0.25, 'cube'), i('Oignon', 0.25, 'pièce')]),
   plat('pizza-legumes', 'Pizza maison aux légumes', 15, 15, { proteine: 'laitier', martin: 'aime' },
     [i('Pâte à pizza', 0.33, 'pièce'), i('Coulis de tomate', 50), i('Mozzarella', 60), i('Champignons de Paris', 40), i('Olives', 10), i('Salade', 30)]),
-  plat('raclette', 'Raclette et salade', 10, 20, { proteine: 'laitier', consistant: true, martin: 'aime', saisons: H },
-    [i('Pomme de terre', 300), i('Fromage à raclette', 180), i('Cornichons', 20), i('Salade', 40)]),
   plat('gnocchis', 'Gnocchis poêlés, sauce tomate et mozzarella', 5, 10, { proteine: 'laitier', martin: 'aime' },
     [i('Gnocchis', 150), i('Coulis de tomate', 80), i('Mozzarella', 40), i('Salade', 30)]),
   plat('coquillettes-pois', 'Coquillettes, petits pois et emmental', 5, 10, { proteine: 'laitier', martin: 'aime' },
