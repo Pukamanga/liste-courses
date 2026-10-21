@@ -137,6 +137,9 @@ function Formulaire({ initial, onFini }) {
             </label>
           ))}
         </div>
+        <label class="champ" style="margin-top:12px">Recette / astuces
+          <textarea style="min-height:100px;font-family:inherit" value={p.recette || ''} onInput={(e) => maj('recette', e.target.value)} />
+        </label>
         <h2>Ingrédients <span class="doux petit-texte">(quantité par personne)</span></h2>
         {p.ingredients.map((ing, idx) => (
           <div key={idx}>
