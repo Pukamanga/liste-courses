@@ -217,6 +217,7 @@ export function analyserJour(date, jour = {}, reglages, periodesGP = []) {
       moments,
       personnes: d.qui.filter((q) => q !== 'gp').length + (d.qui.includes('gp') ? gp : 0),
       convives: portions(d.qui, reglages, vtt) + (d.qui.includes('gp') ? gp * reglages.portions.grandParent : 0),
+      qui: d.qui,
       martin: d.qui.includes('martin'),
       prepDispo: vide ? 0 : d.prepDispo,
       etiquettes,

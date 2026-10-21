@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { analyserJour } from '../src/moteur/regles.js';
 import { fusionnerReglages, ETIQ } from '../src/moteur/reglages.js';
-import { proposer, compatible, scoreSaison, statsNotes } from '../src/moteur/proposition.js';
+import { proposer, compatible, scoreSaison, statsNotes, scorer } from '../src/moteur/proposition.js';
 import { estDeSaison, saisonDuMois } from '../src/moteur/saisons.js';
 import { joursDeLaSemaine } from '../src/moteur/dates.js';
 
@@ -174,5 +174,16 @@ describe('viande et équilibre', () => {
     const menus = { [cr[0].id]: { platId: 'a1', verrouille: true } };
     const res = proposer(cr, plats, menus, R, { graine: 'p' });
     expect(res[cr[1].id].platId).toBe('b1');
+  });
+});
+
+describe('plats que Julie aime', () => {
+  it('favorisés quand Julie mange à la maison', () => {
+    const a = plat('a', {}), b = plat('b', { julieAime: true });
+    const avec = [analyserJour('2026-11-02', { moi: 'M2', julie: 'R' }, R).creneaux.soir];
+    const sans = [analyserJour('2026-11-02', { moi: 'R', julie: 'S' }, R).creneaux.soir];
+    const scoreB = (cr) => scorer(b, cr[0], { stats: {}, graine: 'j', dernieresDates: () => null, reglages: R })
+      - scorer(a, cr[0], { stats: {}, graine: 'j', dernieresDates: () => null, reglages: R });
+    expect(scoreB(avec) - scoreB(sans)).toBeCloseTo(1.5, 1);
   });
 });

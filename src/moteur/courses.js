@@ -17,7 +17,7 @@ const MOTS_RAYONS = [
   ['Boucherie / volaille', ['bœuf', 'boeuf', 'veau', 'porc', 'poulet', 'dinde', 'agneau', 'steak', 'merguez', 'saucisse',
     'chair à saucisse', 'canard']],
   ['Traiteur / charcuterie', ['jambon', 'lardons', 'charcuterie', 'pâte brisée', 'pâte feuilletée', 'pâte à pizza', 'galette',
-    'houmous', 'falafel', 'tofu', 'gnocchi']],
+    'houmous', 'falafel', 'tofu', 'gnocchi', 'quenelle']],
   ['Crèmerie / fromages', ['lait', 'beurre', 'crème', 'œuf', 'oeuf', 'gruyère', 'emmental', 'parmesan', 'mozzarella',
     'reblochon', 'raclette', 'fromage', 'yaourt', 'comté', 'chèvre', 'feta', 'ricotta', 'cheddar']],
   ['Boulangerie', ['pain', 'baguette']],
@@ -26,7 +26,7 @@ const MOTS_RAYONS = [
   ['Épicerie salée', ['pâtes', 'spaghetti', 'coquillettes', 'lasagne', 'riz', 'semoule', 'lentille', 'pois chiche',
     'haricots rouges', 'farine', 'coulis', 'coulis de tomate', 'sauce tomate', 'concentré de tomate', 'sauce', 'huile', 'vinaigre', 'moutarde', 'bouillon', 'thon', 'olive',
     'lait de coco', 'curry', 'épice', 'pesto', 'tortilla', 'vin', 'cornichon', 'chapelure', 'boulgour', 'quinoa',
-    'polenta', 'nouilles', 'pois cassés', 'ras el hanout', 'sauce soja', 'haricots blancs', 'graines']],
+    'polenta', 'nouilles', 'pois cassés', 'ras el hanout', 'sauce soja', 'haricots blancs', 'graines', 'cannelloni']],
 ];
 
 export function rayonDe(ingredient) {
