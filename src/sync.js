@@ -69,15 +69,26 @@ function messageErreur(e) {
 let canal = null;
 let minuteur = null;
 
+// Tâches à lancer une seule fois, quand les données du serveur ont été reçues
+const apresPremiereSynchro = [];
+let premiereSynchroFaite = !configure;
+export function quandSynchronise(f) {
+  if (premiereSynchroFaite) f();
+  else apresPremiereSynchro.push(f);
+}
+
 export async function synchroniser() {
   if (!configure || statut.etat === 'deconnecte') return;
   if (!navigator.onLine) { majStatut({ etat: 'horsligne', message: 'Hors connexion' }); return; }
   majStatut({ etat: 'synchro', message: '' });
   try {
-    await pousser();
-    await tirer();
+    await tirer(); // d'abord recevoir ce que l'autre téléphone a fait
     await pousser();
     majStatut({ etat: 'ok', message: '' });
+    if (!premiereSynchroFaite) {
+      premiereSynchroFaite = true;
+      for (const f of apresPremiereSynchro.splice(0)) f();
+    }
   } catch (e) {
     majStatut({ etat: 'erreur', message: messageErreur(e) });
   }

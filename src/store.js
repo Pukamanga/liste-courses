@@ -70,12 +70,16 @@ export function supprimer(coll, id) {
   if (docs[coll][id]) ecrire(coll, id, docs[coll][id].data || {}, true);
 }
 
-// Plusieurs écritures, une seule notification
-export function lot(ops) {
+// Plusieurs écritures, une seule notification.
+// `doux` : écriture automatique (pas faite par une personne). Elle est datée juste après la version
+// qu'elle remplace, si bien que toute modification faite à la main ensuite, sur l'autre téléphone
+// (un verrou, un choix de plat…), garde la priorité lors de la synchronisation.
+export function lot(ops, { doux = false } = {}) {
   const now = Date.now();
   const ecrits = [];
   for (const { coll, id, data, deleted = false } of ops) {
-    const d = { data: data ?? docs[coll][id]?.data ?? {}, updated_at: now, deleted };
+    const date = doux ? (docs[coll][id]?.updated_at || 0) + 1 : now;
+    const d = { data: data ?? docs[coll][id]?.data ?? {}, updated_at: date, deleted };
     docs[coll][id] = d;
     attente[`${coll}/${id}`] = true;
     ecrits.push({ coll, id, ...d });

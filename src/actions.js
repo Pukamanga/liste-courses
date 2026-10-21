@@ -7,7 +7,7 @@ import { lundiDe, aujourdhui, ajouterJours } from './moteur/dates.js';
 const pareil = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // Ne touche jamais aux jours passés (ce qui a été mangé reste dans l'historique)
-export function proposerSemaine(lundi, effacer = false) {
+export function proposerSemaine(lundi, effacer = false, { doux = false } = {}) {
   const auj = aujourdhui();
   const creneaux = creneauxAutour(lundi, 0).filter((c) => c.date >= auj);
   const menus = donnees('menus');
@@ -17,7 +17,7 @@ export function proposerSemaine(lundi, effacer = false) {
     if (m === null) { if (menus[id]) ops.push({ coll: 'menus', id, deleted: true }); continue; }
     if (!pareil(menus[id], m)) ops.push({ coll: 'menus', id, data: m });
   }
-  if (ops.length) lot(ops);
+  if (ops.length) lot(ops, { doux });
   return ops.length;
 }
 
@@ -70,7 +70,8 @@ export function enregistrerPlat(plat) {
   mettre('plats', plat.id, plat);
 }
 
-// Au démarrage : remplace les propositions à venir devenues contraires aux règles
+// Après la première synchronisation (jamais avant : les verrous posés sur l'autre téléphone
+// doivent être connus) : remplace les propositions à venir devenues contraires aux règles
 // (plat supprimé, viande hors grands-parents), sur la semaine en cours et la suivante.
 export function nettoyerPropositions() {
   const auj = aujourdhui();
@@ -84,7 +85,7 @@ export function nettoyerPropositions() {
       return c.date >= auj && m?.platId && !m.verrouille && !m.note && !m.martinAime &&
         !propositionValide(m, c, plats, R);
     });
-    if (aRevoir) n += proposerSemaine(lundi);
+    if (aRevoir) n += proposerSemaine(lundi, false, { doux: true });
   }
   return n;
 }
