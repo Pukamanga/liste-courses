@@ -125,6 +125,10 @@ describe('étiquettes des créneaux', () => {
     expect(analyserJour('2026-11-03', { moi: 'M', julie: 'R' }, R).vtt).toBe(false);
   });
 
+  it('le VTT du mardi peut être décoché', () => {
+    expect(analyserJour('2026-11-03', { moi: 'S', julie: 'M', vtt: false }, R).vtt).toBe(false);
+  });
+
   it('case VTT cochée un jour de repos', () => {
     const j = analyserJour('2026-11-02', { moi: 'R', julie: 'S', vtt: true }, R);
     expect(j.vtt).toBe(true);

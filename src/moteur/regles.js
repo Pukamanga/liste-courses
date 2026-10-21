@@ -33,6 +33,7 @@ export function activitesDuJour(date, jour, reglages) {
     liste.push({ ...reglages.vttManuel });
   }
   for (const a of liste) {
+    if (jour?.vtt === false && a.qui === 'moi' && a.consistant) { a.ignoree = true; a.raison = 'décoché'; continue; }
     if (a.qui === 'martin') {
       if (a.horsVacances && vacances) { a.ignoree = true; a.raison = 'vacances'; }
       continue;
@@ -102,15 +103,14 @@ function portions(qui, reglages, vtt) {
 export function analyserJour(date, jour = {}, reglages, periodesGP = []) {
   const avertissements = [];
   const postes = {};
+  const manquants = [];
   for (const p of PERSONNES) {
     const code = jour[p];
     if (code && reglages.postes[code]) postes[p] = code;
-    else {
-      postes[p] = 'R';
-      avertissements.push(`Poste de ${reglages.noms[p]} non saisi (considéré en repos)`);
-    }
+    else { postes[p] = 'R'; manquants.push(reglages.noms[p]); }
   }
-  const incomplet = avertissements.length > 0;
+  const incomplet = manquants.length > 0;
+  if (incomplet) avertissements.push(`Poste non saisi : ${manquants.join(', ')} (considéré en repos)`);
   const gp = grandsParentsLe(date, periodesGP);
   const ecole = jourEcole(date, reglages.vacances, reglages.joursEcole);
   const vacances = periodeVacances(date, reglages.vacances);
