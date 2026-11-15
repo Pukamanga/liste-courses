@@ -4,21 +4,7 @@ import { creneauxAutour, reglages } from '../calcul.js';
 import { listeCourses, texteACopier, promptClaude, articlesVerifications, ajouterArticlesLibres } from '../moteur/courses.js';
 import { joursDeLaSemaine, JOURS_LONGS, jourSemaine, moisDe } from '../moteur/dates.js';
 import { NavSemaine, titreSemaine } from './Semaine.jsx';
-
-async function copier(texte) {
-  try {
-    await navigator.clipboard.writeText(texte);
-    return true;
-  } catch {
-    const t = document.createElement('textarea');
-    t.value = texte;
-    document.body.appendChild(t);
-    t.select();
-    const ok = document.execCommand('copy');
-    t.remove();
-    return ok;
-  }
-}
+import { copier } from '../presse-papiers.js';
 
 export function Courses({ lundi, setLundi }) {
   const [nouvel, setNouvel] = useState('');

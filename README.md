@@ -173,6 +173,17 @@ les modifications sont envoyées au retour du réseau.
 - Après le repas : **👍 À refaire**, **😐 Bof**, **😋 Martin a aimé**. Ces notes pèsent dans les
   propositions suivantes.
 
+### Choisir les menus avec Claude
+Pour choisir les plats avec Claude (projet Claude « Menus de la semaine », voir le dossier
+[`claude-cowork/`](claude-cowork/)) à partir de ce qu'il reste à la maison :
+- Onglet **Semaine**, sur la semaine à prévoir : **🤖 Choisir les menus avec Claude**.
+- Notez le congélateur, le frigo (⚠️ devant ce qui doit être mangé vite), les fruits et légumes, le placard et
+  vos envies. Le stock est partagé entre les deux téléphones et gardé d'une semaine à l'autre : il suffit de le
+  mettre à jour.
+- **📋 Copier le message pour Claude** : copie les repas à prévoir (jours, heures, convives, temps de cuisine,
+  étiquettes, plats déjà verrouillés), le stock et les notes des repas des deux dernières semaines. Collez-le
+  dans le projet, puis saisissez les plats retenus avec **Choisir…**.
+
 ### Courses
 En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
 « … les goûters ? », « … des bananes ? », et le rappel « As-tu pensé aux yaourts de Martin ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
@@ -237,6 +248,7 @@ src/moteur/          ← logique pure, sans interface, entièrement testée
   saisons.js         calendrier des fruits et légumes de France
   vacances.js        vacances zone A + jours fériés (calcul de Pâques)
   courses.js         agrégation des ingrédients par rayon
+  menus-claude.js    message « Menus avec Claude » (repas à prévoir + stock)
   import.js          lecture du JSON de planning
   reglages.js        règles par défaut (modifiables dans l'app)
   plats-depart.js    les 54 plats de départ (VERSION_PLATS à incrémenter quand on les change)

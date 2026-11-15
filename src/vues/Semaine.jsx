@@ -3,6 +3,7 @@ import { doc, modifier } from '../store.js';
 import { semaine, reglages, nomDe } from '../calcul.js';
 import { ajouterJours, libelleDate, aujourdhui, depuisIso, MOIS_LONGS, lundiDe } from '../moteur/dates.js';
 import { ETIQ } from '../moteur/reglages.js';
+import { MenusClaude } from './MenusClaude.jsx';
 
 export const CLASSES_ETIQ = {
   [ETIQ.EXPRESS]: 'Express', [ETIQ.AVANCE]: 'Avance', [ETIQ.PLUSIEURS]: 'Plusieurs',
@@ -47,6 +48,7 @@ export function Semaine({ lundi, setLundi, Repas, actions }) {
   return (
     <div>
       <NavSemaine lundi={lundi} setLundi={setLundi}>{actions}</NavSemaine>
+      <MenusClaude key={lundi} lundi={lundi} titre={titreSemaine(lundi)} jours={tous} />
       {incomplets > 0 && <div class="alerte">{incomplets} jour(s) sans planning complet : saisissez-les dans « Planning ».</div>}
       {passes.length > 0 && (
         <button class="btn petit" style="margin-bottom:10px" onClick={() => setVoirPasses(!voirPasses)}>

@@ -128,3 +128,5 @@ details > summary { cursor: pointer; padding: 6px 0; font-weight: 600; }
 .verif:last-child { border-bottom: 0; }
 .carte.a-repondre { border-color: var(--alerte); }
 .recette { white-space: pre-line; font-size: .85rem; margin-top: 4px; }
+.champ.stock { margin-bottom: 10px; }
+.champ.stock textarea { min-height: 72px; font-family: inherit; font-size: .9rem; color: var(--texte); }
