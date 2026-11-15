@@ -214,6 +214,11 @@ export const RECETTES = {
     'Pâte brisée maison (facultatif) : 250 g de farine, 125 g de beurre froid, 1 pincée de sel, 60 g d’eau : 20 s / vit. 6.',
     'Appareil : 4 œufs, 200 ml de crème, sel, poivre : 10 s / vit. 4.',
     'Lardons poêlés sur la pâte, verser l’appareil : 35-40 min au four à 180 °C.'],
+  'burgers-maison': [
+    'Frites au four selon le paquet (15-20 min à 220 °C).',
+    'Salade composée : 240 g de carottes et 1 pomme en morceaux : 4 s / vit. 5. Mélanger avec la mâche, un filet d’huile et de citron.',
+    'Steaks à la poêle, 2-3 min par face ; poser le cheddar dessus en fin de cuisson pour qu’il fonde.',
+    'Toaster les pains, monter : sauce, steak-cheddar, confit d’oignon, rondelles de tomate, quelques feuilles de mâche.'],
 };
 
 // Ajoute la recette (texte) et l'indicateur Thermomix aux plats de départ

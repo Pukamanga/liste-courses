@@ -6,7 +6,7 @@ import { avecRecettes } from './recettes.js';
 // Tout est modifiable dans l'écran « Plats ».
 
 // À incrémenter quand cette liste change : les plats de départ jamais modifiés sont alors mis à jour.
-export const VERSION_PLATS = 8;
+export const VERSION_PLATS = 9;
 
 const i = (nom, qte, unite = 'g') => ({ nom, qte, unite });
 const A = ['automne'], H = ['hiver'], E = ['ete'];
@@ -141,6 +141,10 @@ const PLATS = [
     [i('Tomate', 250), i('Chair à saucisse', 90), i('Riz', 60)]),
   plat('quiche-lorraine', 'Quiche lorraine et salade', 15, 40, { proteine: 'viande', rechauffe: true, martin: 'aime', saisons: AHP },
     [i('Pâte brisée', 0.25, 'pièce'), i('Lardons', 40), i('Œufs', 1, 'pièce'), i('Crème fraîche', 50, 'ml'), i('Salade', 40)]),
+  plat('burgers-maison', 'Burgers maison, frites et salade composée', 5, 15, { proteine: 'viande' },
+    [i('Pain burger', 1, 'pièce'), i('Steak haché', 1, 'pièce'), i('Cheddar', 1, 'tranche'),
+      { ...i('Confit d’oignon', 15), rayon: 'Épicerie sucrée' }, i('Tomate', 50), i('Mâche', 30), i('Frites surgelées', 150),
+      i('Carotte', 60), i('Pomme', 0.3, 'pièce'), i('Sauce burger', 15)]),
 ];
 
 export const PLATS_DEPART = avecRecettes(PLATS);

@@ -83,7 +83,7 @@ Martin déjeune à la maison pendant les vacances. Dates enregistrées dans l'ap
 - Pont de l'Ascension : à partir du 6 mai 2027, reprise le 10 mai
 
 ## Les plats de l'application
-54 plats. « Réchauffable » : convient aux repas prêts à l'avance ou en plusieurs temps. « Se fait en double » :
+55 plats. « Réchauffable » : convient aux repas prêts à l'avance ou en plusieurs temps. « Se fait en double » :
 cuisiné en grande quantité un jour de cuisine pour avoir des restes.
 
 ### Légumineuses
@@ -169,4 +169,5 @@ cuisiné en grande quantité un jour de cuisine pour avoir des restes.
 | Poulet basquaise, riz | 20 + 45 min | été, aut. | réchauffable, se fait en double | Cuisses de poulet 180 g · Poivron 100 g · Tomate 100 g · Oignon 0,5 pièce · Riz 70 g |
 | Tomates farcies, riz | 25 + 45 min | été | réchauffable, se fait en double, Martin aime | Tomate 250 g · Chair à saucisse 90 g · Riz 60 g |
 | Quiche lorraine et salade | 15 + 40 min | aut., hiv., print. | réchauffable, Martin aime | Pâte brisée 0,25 pièce · Lardons 40 g · Œufs 1 pièce · Crème fraîche 50 ml · Salade 40 g |
+| Burgers maison, frites et salade composée | 5 + 15 min | toute l’année | — | Pain burger 1 pièce · Steak haché 1 pièce · Cheddar 1 tranche · Confit d’oignon 15 g · Tomate 50 g · Mâche 30 g · Frites surgelées 150 g · Carotte 60 g · Pomme 0,3 pièce · Sauce burger 15 g |
 

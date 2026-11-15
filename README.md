@@ -10,7 +10,7 @@ de saison, avec les restes enchaînés. Elle produit aussi la liste de courses d
 - **Semaine** : moments de repas (heure + convives), temps de préparation, étiquettes
   (« Express 15 min », « Prêt à l'avance », « En plusieurs temps », « Jour de cuisine », « VTT », « Grands-parents »),
   proposition automatique, « Autre idée », verrouillage, notes après le repas.
-- **Plats** : 54 plats de départ (avec recette Thermomix), majoritairement végétariens et équilibrés (légumes + protéine + féculent), modifiables
+- **Plats** : 55 plats de départ (avec recette Thermomix), majoritairement végétariens et équilibrés (légumes + protéine + féculent), modifiables
   (temps, étiquettes, saisons, protéine principale, ingrédients par personne). La viande n'est proposée que quand
   les grands-parents sont là.
 - **Courses** : ingrédients additionnés et regroupés par rayon, cases « déjà à la maison », bouton « Copier » et
@@ -251,7 +251,7 @@ src/moteur/          ← logique pure, sans interface, entièrement testée
   menus-claude.js    message « Menus avec Claude » (repas à prévoir + stock)
   import.js          lecture du JSON de planning
   reglages.js        règles par défaut (modifiables dans l'app)
-  plats-depart.js    les 54 plats de départ (VERSION_PLATS à incrémenter quand on les change)
+  plats-depart.js    les 55 plats de départ (VERSION_PLATS à incrémenter quand on les change)
 src/store.js         stockage local-first (localStorage) + file d'envoi
 src/sync.js          Supabase : connexion, envoi, lecture, temps réel
 src/vues/            écrans (Preact)
