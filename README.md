@@ -184,6 +184,34 @@ Pour choisir les plats avec Claude (projet Claude « Menus de la semaine », voi
   étiquettes, plats déjà verrouillés), le stock et les notes des repas des deux dernières semaines. Collez-le
   dans le projet, puis saisissez les plats retenus avec **Choisir…**.
 
+### Le planning dans le projet Claude « Sport »
+Claude lit directement le planning (postes, VTT, volley) dans Supabase, en **lecture seule** : rien à copier,
+il voit toujours la dernière version saisie dans l'app. À faire une seule fois, depuis un ordinateur (~10 min) :
+
+1. **Créer la vue lisible** : Supabase → **SQL Editor** → **New query**, colle le contenu de
+   [`supabase/vue-sport.sql`](supabase/vue-sport.sql), puis **Run**. Elle présente un jour par ligne
+   (poste, horaires, activités maintenues ou annulées). Elle est dans un schéma `sport` que l'API de l'app
+   n'expose pas : ni le web ni l'application ne peuvent la lire.
+2. **Récupérer l'identifiant du projet** : c'est le début de l'adresse Supabase
+   (`https://IDENTIFIANT.supabase.co`), aussi visible dans **Project Settings → General → Project ID**.
+3. **Ajouter le connecteur dans Claude** : claude.ai → **Paramètres → Connecteurs → Ajouter un connecteur
+   personnalisé** :
+   - nom : `Supabase repas (lecture)` ;
+   - URL : `https://mcp.supabase.com/mcp?project_ref=IDENTIFIANT&read_only=true&features=database`
+   - **Ajouter**, puis **Se connecter** : connecte-toi à Supabase et choisis l'organisation du projet.
+
+   `read_only=true` interdit toute modification et `project_ref` limite l'accès à ce seul projet. Préfère ce
+   connecteur personnalisé à la version « Supabase » de l'annuaire : c'est l'adresse ci-dessus qui garantit
+   ces deux restrictions.
+4. **Instructions du projet Sport** : ajoute le texte de
+   [`claude-sport/instructions-planning.md`](claude-sport/instructions-planning.md) aux instructions du projet.
+5. **Dans une conversation du projet** : menu **+** → active le connecteur `Supabase repas (lecture)`, puis
+   par exemple « Planifie mes séances des deux prochaines semaines ». La première fois, Claude demande
+   l'autorisation d'exécuter la requête (`execute_sql`) : tu peux choisir **Toujours autoriser**.
+
+> Si les règles de l'app changent (horaires des postes, activités), la vue en tient compte toute seule.
+> Seules des règles **par défaut** modifiées dans le code demandent de ré-exécuter `vue-sport.sql`.
+
 ### Courses
 En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
 « … les goûters ? », « … des bananes ? », et le rappel « As-tu pensé aux yaourts de Martin ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
@@ -257,6 +285,7 @@ src/sync.js          Supabase : connexion, envoi, lecture, temps réel
 src/vues/            écrans (Preact)
 public/sw.js         service worker (hors connexion)
 supabase/schema.sql  tables, RLS, temps réel
+supabase/vue-sport.sql  vue en lecture seule du planning pour le projet Claude « Sport »
 tests/               tests unitaires
 ```
 
