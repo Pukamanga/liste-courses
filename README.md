@@ -230,7 +230,11 @@ les remplacera.
 2. **API et services → Bibliothèque** → cherche **Google Calendar API** → **Activer**.
 3. **API et services → Écran de consentement OAuth** (« Google Auth Platform ») → **Commencer** :
    nom de l'application `Repas de la famille`, ton adresse comme e-mail d'assistance, audience **Externe**,
-   ton adresse comme contact → **Créer**.
+   ton adresse comme contact → **Créer**. Puis dans **Branding** (« Image de marque ») :
+   - page d'accueil : `https://pukamanga.github.io/liste-courses/`
+   - règles de confidentialité : `https://pukamanga.github.io/liste-courses/confidentialite.html`
+   - conditions d'utilisation : `https://pukamanga.github.io/liste-courses/conditions.html`
+   - domaines autorisés : `pukamanga.github.io` et `supabase.co`
 4. **Accès aux données** → **Ajouter ou supprimer des champs d'application** → dans « Ajouter manuellement »,
    colle `https://www.googleapis.com/auth/calendar.app.created` → **Ajouter au tableau**, coche aussi `openid`
    et `…/auth/userinfo.email` → **Mettre à jour** → **Enregistrer**.
@@ -336,6 +340,7 @@ src/sync.js          Supabase : connexion, envoi, lecture, temps réel
 src/agenda.js        connexion / état de l'agenda Google (appelle la fonction agenda-google)
 src/vues/            écrans (Preact)
 public/sw.js         service worker (hors connexion)
+public/confidentialite.html, conditions.html  pages demandées par Google pour l'écran d'autorisation
 supabase/schema.sql  tables, RLS, temps réel
 supabase/vue-sport.sql  vue en lecture seule du planning pour le projet Claude « Sport »
 supabase/agenda-google.sql  file d'attente, déclencheur et tâche planifiée de la synchro Google Agenda

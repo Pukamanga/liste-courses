@@ -2,7 +2,7 @@
 // - page : réseau d'abord (pour recevoir les mises à jour), sinon version en cache
 // - fichiers de l'application : cache d'abord (leurs noms changent à chaque version)
 // - Supabase (autre domaine) : jamais mis en cache, la synchronisation gère le hors-ligne
-const CACHE = 'repas-v1';
+const CACHE = 'repas-v2';
 const COQUILLE = ['./', './manifest.webmanifest', './icone.svg', './icone-192.png', './icone-512.png'];
 
 async function mettreEnCacheLaCoquille() {
@@ -33,6 +33,8 @@ self.addEventListener('fetch', (e) => {
   if (url.origin !== self.location.origin) return;
 
   if (req.mode === 'navigate') {
+    // Seule la page de l'application est gardée pour le hors-ligne (pas les pages comme confidentialite.html)
+    if (!/\/(index\.html)?$/.test(url.pathname)) return;
     e.respondWith(
       fetch(req)
         .then((rep) => {

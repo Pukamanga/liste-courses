@@ -50,6 +50,9 @@ export function Connexion() {
         )}
         {erreur && <p class="erreur">{erreur}</p>}
       </div>
+      <p class="doux petit-texte" style="text-align:center">
+        Application privée du foyer · <a href="confidentialite.html">Confidentialité</a> · <a href="conditions.html">Conditions d’utilisation</a>
+      </p>
     </main></div>
   );
 }
