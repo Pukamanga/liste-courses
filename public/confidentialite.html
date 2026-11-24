@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Confidentialité — Repas de la famille</title>
+  <link rel="icon" href="icone.svg" type="image/svg+xml" />
+  <style>
+    :root { --fond: #f6f5f1; --texte: #1f2523; --doux: #5f6a64; --accent: #2f6b4f; --ligne: #e2e0d8; color-scheme: light dark; }
+    @media (prefers-color-scheme: dark) { :root { --fond: #141816; --texte: #e8ece9; --doux: #9aa59f; --accent: #6cc196; --ligne: #313a35; } }
+    body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.55 system-ui, -apple-system, sans-serif; }
+    main { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { font-size: 1.5rem; margin: 0 0 4px; } h2 { font-size: 1.1rem; margin: 28px 0 6px; }
+    a { color: var(--accent); } .doux { color: var(--doux); } footer { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--ligne); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Règles de confidentialité</h1>
+  <p class="doux">Repas de la famille — dernière mise à jour : 24 novembre 2026</p>
+
+  <p>Repas de la famille est une application privée qui sert à organiser les repas d’un foyer à partir des plannings
+  de travail. Elle n’est utilisée que par les deux membres de ce foyer : personne d’autre ne peut s’y connecter.</p>
+
+  <h2>Données enregistrées</h2>
+  <ul>
+    <li>L’adresse e-mail servant à se connecter à l’application.</li>
+    <li>Le planning (postes de travail), les plats, les menus, la liste de courses et les réglages saisis dans l’application.</li>
+    <li>Si un membre connecte son agenda Google : l’adresse de ce compte Google, une clé d’accès fournie par Google
+      et l’identifiant de l’agenda « Planning travail » créé par l’application.</li>
+  </ul>
+  <p>Ces données sont stockées chez Supabase (hébergement de la base de données), protégées par la connexion et par
+  des règles d’accès qui les réservent aux deux membres. Elles ne sont ni vendues, ni partagées, ni utilisées à des
+  fins publicitaires.</p>
+
+  <h2>Utilisation de Google Agenda</h2>
+  <p>Avec l’accord de l’utilisateur, l’application crée dans son compte Google un agenda dédié, « Planning travail »,
+  et y tient à jour les postes de travail du foyer. Elle utilise uniquement l’autorisation
+  <code>calendar.app.created</code>, qui ne donne accès qu’aux agendas créés par l’application : elle ne voit ni ne
+  modifie les autres agendas et événements de l’utilisateur. Elle lit aussi l’adresse e-mail du compte Google, pour
+  l’afficher dans les réglages.</p>
+  <p>L’utilisation et le transfert des informations reçues des API Google respectent les
+  <a href="https://developers.google.com/terms/api-services-user-data-policy">Règles relatives aux données utilisateur
+  des services d’API Google</a>, y compris les exigences d’utilisation limitée.</p>
+
+  <h2>Suppression</h2>
+  <p>Le bouton « Déconnecter mon agenda » (Réglages) supprime l’agenda « Planning travail » du compte Google, efface la
+  clé d’accès et retire l’autorisation. L’accès peut aussi être retiré à tout moment depuis
+  <a href="https://myaccount.google.com/permissions">la page des autorisations du compte Google</a>.
+  Les autres données peuvent être supprimées sur simple demande.</p>
+
+  <h2>Contact</h2>
+  <p>Pour toute question : l’adresse e-mail d’assistance indiquée sur l’écran d’autorisation Google de l’application.</p>
+
+  <footer class="doux"><a href="./">Repas de la famille</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="conditions.html">Conditions d’utilisation</a></footer>
+</main>
+</body>
+</html>

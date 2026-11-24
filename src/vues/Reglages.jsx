@@ -1,9 +1,10 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { mettre, doc, exporterTout } from '../store.js';
 import { reglages } from '../calcul.js';
 import { CODES_POSTES } from '../moteur/reglages.js';
 import { JOURS_COURTS } from '../moteur/dates.js';
 import { useSync, deconnecter, synchroniser, configure } from '../sync.js';
+import { statutAgenda, connecterAgenda, deconnecterAgenda, retourAgenda } from '../agenda.js';
 
 // Enregistre une clé de premier niveau des réglages (les autres restent aux valeurs par défaut)
 function majCle(cle, valeur) {
@@ -52,6 +53,8 @@ export function Reglages() {
           </>
         ) : <p class="doux">Mode local (Supabase non configuré) : les données restent sur ce téléphone.</p>}
       </div>
+
+      {configure && sync.email && <AgendaGoogle email={sync.email} />}
 
       <details class="carte">
         <summary>Prénoms</summary>
@@ -181,6 +184,58 @@ export function Reglages() {
           <button class="btn petit danger" onClick={() => { if (confirm('Revenir aux règles par défaut ?')) mettre('reglages', 'regles', {}); }}>Réinitialiser les règles</button>
         </div>
       </details>
+    </div>
+  );
+}
+
+const dateHeure = (t) => (t ? new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '');
+
+// Envoi automatique des postes vers un agenda Google dédié (fonction Supabase « agenda-google »)
+function AgendaGoogle({ email }) {
+  const [etat, setEtat] = useState(null); // réponse de la fonction
+  const [message, setMessage] = useState(retourAgenda);
+  const [occupe, setOccupe] = useState(false);
+  const R = reglages();
+
+  const charger = () => statutAgenda().then(setEtat).catch((e) => setMessage({ ok: false, message: e.message }));
+  useEffect(() => { charger(); }, [email]);
+
+  const agir = async (f) => {
+    setOccupe(true);
+    try { await f(); } catch (e) { setMessage({ ok: false, message: e.message }); } finally { setOccupe(false); }
+  };
+  const estMoi = (m) => m.email.toLowerCase() === email.toLowerCase();
+  const membres = etat?.membres || [];
+  const moi = membres.find(estMoi);
+
+  return (
+    <div class="carte">
+      <h3>Agenda Google</h3>
+      <p class="doux petit-texte">Les postes de {R.noms.moi} et de {R.noms.julie} (sauf Repos et Congé) sont envoyés dans un agenda
+        « Planning travail » créé dans le compte Google de chacun. Mise à jour automatique environ une minute après chaque modification.</p>
+      {message && <p class={message.ok ? 'petit-texte' : 'erreur petit-texte'}>{message.ok ? '✓ ' : ''}{message.message}</p>}
+      {etat && !etat.googleConfigure && <p class="erreur petit-texte">Secrets GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET manquants dans Supabase.</p>}
+      {membres.map((m) => (
+        <p class="petit-texte" key={m.email} style="margin:4px 0">
+          <b>{estMoi(m) ? 'Vous' : m.email}</b> : {m.connecte
+            ? <>{m.bloque ? '⚠️ ' : '✓ '}{m.google_email || 'connecté'}{m.derniere_synchro ? ` · mis à jour ${dateHeure(m.derniere_synchro)}` : ' · envoi en cours'}
+              {m.erreur && <span class="erreur"><br />{m.erreur}</span>}</>
+            : <span class="doux">pas connecté</span>}
+        </p>
+      ))}
+      {etat && (
+        <div class="rangee" style="margin-top:8px">
+          {(!moi?.connecte || moi?.bloque)
+            ? <button class="btn petit principal" disabled={occupe || !etat.googleConfigure} onClick={() => agir(connecterAgenda)}>
+                {moi?.bloque ? 'Reconnecter mon agenda Google' : 'Connecter mon agenda Google'}</button>
+            : <button class="btn petit danger" disabled={occupe} onClick={() => {
+                if (confirm('Déconnecter votre agenda Google ? L’agenda « Planning travail » sera supprimé de votre compte Google.')) {
+                  agir(async () => { await deconnecterAgenda(); setMessage({ ok: true, message: 'Agenda Google déconnecté.' }); await charger(); });
+                }
+              }}>Déconnecter mon agenda</button>}
+          <button class="btn petit" disabled={occupe} onClick={charger}>Actualiser</button>
+        </div>
+      )}
     </div>
   );
 }
