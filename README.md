@@ -18,6 +18,7 @@ de saison, avec les restes enchaînés. Elle produit aussi la liste de courses d
 - **Réglages** : toutes les règles (horaires des postes, heures des repas, temps de cuisine, activités,
   vacances scolaires, portions…).
 - Synchronisation en temps réel entre nos deux téléphones (Supabase), utilisable hors connexion.
+- **Google Agenda** : nos postes envoyés automatiquement dans un agenda « Planning travail » de chacun.
 
 ---
 
@@ -212,6 +213,56 @@ il voit toujours la dernière version saisie dans l'app. À faire une seule fois
 > Si les règles de l'app changent (horaires des postes, activités), la vue en tient compte toute seule.
 > Seules des règles **par défaut** modifiées dans le code demandent de ré-exécuter `vue-sport.sql`.
 
+### Le planning dans Google Agenda
+Les postes de Julien et de Julie (M, S, M2, F, avec leurs horaires) sont envoyés automatiquement dans un agenda
+**« Planning travail »** créé dans le compte Google de chacun : chacun voit ses postes et ceux de l'autre.
+Repos et Congé n'y apparaissent pas, ni le sport. C'est Supabase qui envoie les mises à jour, environ une minute
+après chaque modification, même si les téléphones sont éteints.
+
+L'application n'a accès qu'à cet agenda dédié : elle ne voit ni ne modifie vos autres agendas. Les événements
+n'ont pas de rappel. Ne les modifiez pas dans Google Agenda : la prochaine modification du planning dans l'app
+les remplacera.
+
+**Mise en place, une seule fois, depuis un ordinateur (~25 min) :**
+
+*A. Google Cloud* — sur [console.cloud.google.com](https://console.cloud.google.com), connecté avec ton compte Google :
+1. Crée un projet (menu en haut à gauche → **Nouveau projet**), par exemple `Repas famille`.
+2. **API et services → Bibliothèque** → cherche **Google Calendar API** → **Activer**.
+3. **API et services → Écran de consentement OAuth** (« Google Auth Platform ») → **Commencer** :
+   nom de l'application `Repas de la famille`, ton adresse comme e-mail d'assistance, audience **Externe**,
+   ton adresse comme contact → **Créer**.
+4. **Accès aux données** → **Ajouter ou supprimer des champs d'application** → dans « Ajouter manuellement »,
+   colle `https://www.googleapis.com/auth/calendar.app.created` → **Ajouter au tableau**, coche aussi `openid`
+   et `…/auth/userinfo.email` → **Mettre à jour** → **Enregistrer**.
+5. **Audience** → **Publier l'application** → confirme : l'état passe à **En production**.
+   ⚠️ Indispensable : en mode « Test », Google retire l'accès au bout de 7 jours. **Ne demande pas** la
+   validation de Google : elle est inutile pour nous deux.
+6. **Clients** → **Créer un client** → type **Application Web** → dans **URI de redirection autorisés**, ajoute
+   `https://IDENTIFIANT.supabase.co/functions/v1/agenda-google` (IDENTIFIANT : voir la section précédente)
+   → **Créer**. Garde l'**ID client** et le **Code secret du client**.
+
+*B. Supabase* :
+1. **SQL Editor** → **New query** → colle le contenu de [`supabase/agenda-google.sql`](supabase/agenda-google.sql)
+   → **Run**. Il crée la file d'attente, le déclencheur sur le planning et la tâche planifiée (`pg_cron`, chaque minute).
+2. **Edge Functions → Secrets** : ajoute `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` (valeurs de l'étape A6).
+
+*C. GitHub* (pour que la fonction soit déployée avec le site) :
+1. Sur [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens) → **Generate new token**
+   → copie-le.
+2. Dans le dépôt GitHub : **Settings → Secrets and variables → Actions** → ajoute `SUPABASE_ACCESS_TOKEN` (le jeton)
+   et `SUPABASE_PROJECT_REF` (l'IDENTIFIANT du projet).
+3. **Actions → Tests et déploiement → Run workflow** : le job « fonction-agenda » déploie la fonction `agenda-google`.
+
+*D. Sur chaque téléphone* (Julien puis Julie) : **Réglages → Agenda Google → Connecter mon agenda Google** →
+choisis ton compte Google. Google affiche « Google n'a pas validé cette application » : c'est normal (c'est
+la nôtre) → **Paramètres avancés** → **Accéder à Repas de la famille** → **Continuer**. De retour dans l'app,
+l'agenda « Planning travail » apparaît dans Google Agenda et se remplit en une ou deux minutes (postes depuis
+un mois en arrière, et tous ceux déjà saisis pour la suite).
+
+> **Déconnecter mon agenda** (Réglages) supprime l'agenda « Planning travail » du compte Google et retire l'accès.
+> Si Google retire l'accès (mot de passe changé, accès révoqué), les Réglages affichent ⚠️ et un bouton
+> **Reconnecter** : tout est renvoyé à la reconnexion.
+
 ### Courses
 En haut de la liste, réponds aux questions de la semaine : « Reste-t-il de quoi faire les petits-déjeuners ? »,
 « … les goûters ? », « … des bananes ? », et le rappel « As-tu pensé aux yaourts de Martin ? ». « Non, à racheter » ajoute les articles correspondants dans les bons rayons
@@ -259,7 +310,7 @@ Toutes les valeurs ci-dessous se modifient dans **Réglages**.
 
 ```bash
 npm install
-npm test          # tests unitaires du moteur (Vitest)
+npm test          # tests unitaires (Vitest), dont la synchro Google sur un Postgres en mémoire (PGlite)
 npm run dev       # http://localhost:5173 (mode local sans Supabase)
 npm run build
 ```
@@ -282,10 +333,16 @@ src/moteur/          ← logique pure, sans interface, entièrement testée
   plats-depart.js    les 55 plats de départ (VERSION_PLATS à incrémenter quand on les change)
 src/store.js         stockage local-first (localStorage) + file d'envoi
 src/sync.js          Supabase : connexion, envoi, lecture, temps réel
+src/agenda.js        connexion / état de l'agenda Google (appelle la fonction agenda-google)
 src/vues/            écrans (Preact)
 public/sw.js         service worker (hors connexion)
 supabase/schema.sql  tables, RLS, temps réel
 supabase/vue-sport.sql  vue en lecture seule du planning pour le projet Claude « Sport »
+supabase/agenda-google.sql  file d'attente, déclencheur et tâche planifiée de la synchro Google Agenda
+supabase/functions/agenda-google/  fonction Supabase (Deno) qui écrit dans Google Agenda
+  planning.js        calcul des événements (pur, testé)
+  synchro.js         connexion OAuth, file d'attente, envoi des différences
+  google.js          appels à l'API Google
 tests/               tests unitaires
 ```
 

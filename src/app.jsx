@@ -11,6 +11,7 @@ import { configure, supabase, initialiserSync, surSession, useSync, quandSynchro
 import { lundiDe, aujourdhui, joursDeLaSemaine } from './moteur/dates.js';
 import { Semaine } from './vues/Semaine.jsx';
 import { Planning } from './vues/Planning.jsx';
+import { retourAgenda } from './agenda.js';
 
 semer('plats', PLATS_DEPART, VERSION_PLATS);
 quandSynchronise(nettoyerPropositions);
@@ -53,7 +54,7 @@ function Bandeau() {
 export function App() {
   useStore();
   const session = useSession();
-  const [onglet, setOnglet] = useState(() => sessionStorage.getItem('onglet') || 'semaine');
+  const [onglet, setOnglet] = useState(() => (retourAgenda ? 'reglages' : sessionStorage.getItem('onglet') || 'semaine'));
   const [lundi, setLundi] = useState(lundiDe(aujourdhui()));
   const aller = (id) => { setOnglet(id); try { sessionStorage.setItem('onglet', id); } catch {} window.scrollTo(0, 0); };
 
